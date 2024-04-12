@@ -1,5 +1,5 @@
 [tool.poetry]
-name        = "pycycle"
+name        = "pyimportcheck"
 version     = "0.0.0"
 description = "Python circular import detector"
 readme      = "README.md"
@@ -7,12 +7,12 @@ authors     = [
     "Yann MAGNIN <yann.magnin@protonmail.com>",
 ]
 packages    = [
-    { include = "pycycle" },
+    { include = "pyimportcheck" },
 ]
 
 
 [tool.poetry.scripts]
-pycycle = 'pycycle.cli:pycycle_cli_entry'
+pyimportcheck = 'pyimportcheck.cli:pyimportcheck_cli_entry'
 
 
 [tool.poetry.dependencies]

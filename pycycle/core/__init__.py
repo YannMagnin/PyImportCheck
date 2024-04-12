@@ -1,3 +1,0 @@
-"""
-pycycle.core    - pycycle core
-"""

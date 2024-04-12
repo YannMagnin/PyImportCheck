@@ -1,5 +1,5 @@
 """
-pycycle.core.detect - circular import detector
+pyimportcheck.core.detect - circular import detector
 """
 __all__ = [
     'pycycle_detect_circular_import',
@@ -7,8 +7,8 @@ __all__ = [
 from typing import List, Tuple, Dict, Any, Union
 from pathlib import Path
 
-from pycycle.core.exception import PycycleException
-from pycycle.core._logger import log_warning, log_error
+from pyimportcheck.core.exception import PycycleException
+from pyimportcheck.core._logger import log_warning, log_error
 
 #---
 # Internals
@@ -106,7 +106,7 @@ def _pycycle_check_import(
 # Public
 #---
 
-def pycycle_detect_circular_import(info: Dict[str,Any]) -> None:
+def pycycle_detect_circular_import(info: Dict[str,Any]) -> int:
     """ try to detect circular import
     """
     error_counter = _pycycle_check_import(
@@ -116,3 +116,4 @@ def pycycle_detect_circular_import(info: Dict[str,Any]) -> None:
     )
     if error_counter > 0:
         log_error(f"Detected {error_counter} cyclic import")
+    return error_counter

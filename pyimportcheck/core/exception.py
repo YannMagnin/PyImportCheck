@@ -1,5 +1,5 @@
 """
-pycycle.core.exception  - generic pycycle exception class
+pyimportcheck.core.exception  - generic pycycle exception class
 """
 __all__ = [
     'PycycleException',

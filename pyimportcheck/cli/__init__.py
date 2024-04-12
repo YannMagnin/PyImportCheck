@@ -1,8 +1,8 @@
 """
-pycycle.cli   - Crupy CLI entry
+pyimportcheck.cli   - Crupy CLI entry
 """
 __all__ = [
-    'pycycle_cli_entry',
+    'pyimportcheck_cli_entry',
 ]
 from typing import NoReturn
 from pathlib import Path
@@ -10,14 +10,14 @@ import sys
 
 import click
 
-from pycycle.core.scan import pycycle_scan_package
-from pycycle.core.detect import pycycle_detect_circular_import
+from pyimportcheck.core.scan import pycycle_scan_package
+from pyimportcheck.core.detect import pycycle_detect_circular_import
 
 #---
 # Public
 #---
 
-@click.command('pycycle')
+@click.command('pyimportcheck')
 @click.option(
     '-p', '--prefix', 'package_prefix',
     required    = True,
@@ -31,9 +31,9 @@ from pycycle.core.detect import pycycle_detect_circular_import
     ),
 )
 @click.version_option()
-def pycycle_cli_entry(package_prefix: Path) -> NoReturn:
+def pyimportcheck_cli_entry(package_prefix: Path) -> NoReturn:
     """ Python circular import detector
     """
     info = pycycle_scan_package(package_prefix)
-    pycycle_detect_circular_import(info)
-    sys.exit(0)
+    error = pycycle_detect_circular_import(info)
+    sys.exit(0 if error == 0 else 1)

@@ -1,4 +1,4 @@
-# PyCircularImport - detect python circular import
+# PyImportCheck - detect python circular import
 
 > [!WARNING]
 > This project is very limited and designed for my personal use to quickly
@@ -40,7 +40,7 @@ file `test/a.py` line `12` and `test/__init__.py` line `10`.
 
 Install and update using [pip](https://pip.pypa.io/en/stable/getting-started/):
 ```bash
-pip install pycircularimport
+pip install pyimportcheck
 ```
 
 Or you can install manually using [poetry](https://python-poetry.org/docs/):
@@ -52,7 +52,7 @@ Or you can install manually using [poetry](https://python-poetry.org/docs/):
 poetry install
 
 # check installation
-pycircularimport --version
+pyimportcheck --version
 ```
 
 ## How to use
@@ -61,5 +61,5 @@ You can use the `--help` flag to display information, but (for now) only one
 argument is required : `(-p|--prefix) <package path>` which is the path of the
 package sources
 ```bash
-crupycircularimport -p /path/to/local/package
+pyimportcheck -p /path/to/local/package
 ```

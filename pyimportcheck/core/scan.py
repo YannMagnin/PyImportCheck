@@ -1,5 +1,5 @@
 """
-pycycle.core.scan   - python package scanner
+pyimportcheck.core.scan   - python package scanner
 """
 __all__ = [
     'pycycle_scan_package',
@@ -8,8 +8,8 @@ from typing import Dict, List, Tuple, Any
 from pathlib import Path
 import re
 
-from pycycle.core.exception import PycycleException
-from pycycle.core._logger import log_warning
+from pyimportcheck.core.exception import PycycleException
+from pyimportcheck.core._logger import log_warning
 
 #---
 # Internals
@@ -28,6 +28,11 @@ def _pycycle_analyse_file(
                 rf'^from (?P<pypath>{package}((\.[a-z_]+)?)+)',
                 line
             )
+            if not import_info:
+                import_info = re.match(
+                    rf'^import (?P<pypath>{package}((\.[a-z_]+)?)+)$',
+                    line,
+                )
             if not import_info:
                 continue
             info.append((i+1, import_info['pypath']))
