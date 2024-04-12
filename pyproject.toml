@@ -1,0 +1,25 @@
+[tool.poetry]
+name        = "pycycle"
+version     = "0.0.0"
+description = "Python circular import detector"
+readme      = "README.md"
+authors     = [
+    "Yann MAGNIN <yann.magnin@protonmail.com>",
+]
+packages    = [
+    { include = "pycycle" },
+]
+
+
+[tool.poetry.scripts]
+pycycle = 'pycycle.cli:pycycle_cli_entry'
+
+
+[tool.poetry.dependencies]
+python  = ">=3.8.*"
+click   = "8.1.*"
+
+[tool.poetry.dev-dependencies]
+pynvim  = "*"
+pylint  = "*"
+mypy    = "*"
