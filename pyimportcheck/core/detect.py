@@ -69,8 +69,8 @@ def _check_circular(
         if not circular_list:
             continue
         error = f"({str(_pathfile)}) {package}:{import_line} -> "
-        for import_lineno, import_name in circular_list[:-1]:
-            error += f"{import_name}:{import_lineno} -> "
+        for import_cycle_lineno, import_cycle_name in circular_list[:-1]:
+            error += f"{import_cycle_name}:{import_cycle_lineno} -> "
         error += f"{circular_list[-1][1]}:{circular_list[-1][0]}"
         log_error(error)
         error_counter += 1

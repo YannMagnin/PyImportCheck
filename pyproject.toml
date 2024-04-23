@@ -1,6 +1,6 @@
 [tool.poetry]
 name        = "pyimportcheck"
-version     = "0.0.0"
+version     = "0.0.2"
 description = "Python circular import detector"
 readme      = "README.md"
 authors     = [

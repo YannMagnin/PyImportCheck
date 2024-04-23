@@ -6,6 +6,7 @@ __all__ = [
 ]
 from typing import NoReturn
 from pathlib import Path
+from importlib.metadata import version
 import sys
 
 import click
@@ -30,7 +31,7 @@ from pyimportcheck.core.detect import pycycle_detect_circular_import
         path_type   = Path,
     ),
 )
-@click.version_option()
+@click.version_option(message='%(version)s')
 def pyimportcheck_cli_entry(package_prefix: Path) -> NoReturn:
     """ Python circular import detector
     """

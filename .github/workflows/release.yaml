@@ -1,0 +1,45 @@
+name: 'Release'
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+jobs:
+  release-codebase:
+    permissions: write-all
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'checkout the codebase'
+        uses: actions/checkout@v4
+      - name: 'install CPython 3.8'
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.8'
+      - name: 'install poetry'
+        uses: abatilo/actions-poetry@v2
+        with:
+          poetry-version: '1.8.2'
+      - name: 'setup a local virtual environment'
+        run: |
+          poetry config virtualenvs.create true --local
+          poetry config virtualenvs.in-project true --local
+      - name: 'define a cache for the virtual environment'
+        uses: actions/cache@v3
+        with:
+          path: ./.venv
+          key: venv-${{ hashFiles('poetry.lock') }}
+      - name: 'build the project dependencies'
+        run: |
+          poetry install
+          poetry build
+      - name: 'generate pre-calculated information'
+        run: |
+          echo "date_test=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
+          echo "version=$(poetry run pyimportcheck --version)" >> $GITHUB_ENV
+      - name: 'update the release'
+        uses: softprops/action-gh-release@v2
+        with:
+          name: 'v${{ env.version }} (${{ env.date_test }})'
+          files: |
+            dist/pyimportcheck-*.whl
+            dist/pyimportcheck-*.tar.gz
+          append_body: 'true'
