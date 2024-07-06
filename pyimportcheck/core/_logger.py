@@ -17,4 +17,4 @@ def log_error(text: str, end: str ='\n') -> None:
 
 def log_warning(text: str, end: str ='\n') -> None:
     """ display warning """
-    print(f"\033[32m[WARNING] {text}\033[0m", end=end)
+    print(f"\033[33m[WARNING] {text}\033[0m", end=end)

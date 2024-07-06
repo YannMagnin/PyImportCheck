@@ -39,7 +39,7 @@ def _resolve_package(
             log_warning('Missing __init__ file')
             return None
         target = target['modules']['__init__']
-    for next_import_lineno, next_import_name in target['import']:
+    for next_import_lineno, next_import_name in target['imports']:
         valid = _resolve_package(
             root_info,
             next_import_name,
@@ -96,7 +96,7 @@ def _pycycle_check_import(
             module_info['path'].resolve().relative_to(
                 (root_info['prefix']/'..').resolve(),
             ),
-            module_info['import'],
+            module_info['imports'],
             f"{package}.{module}",
             root_info,
         )
