@@ -40,8 +40,9 @@ def _pic_scan_check_from_multiline(
         flags   = re.MULTILINE,
         pattern = \
             rf"^from (?P<path>{package}(\.[a-zA-Z0-9_]+)*) import "
-            '\\(( )*(#.*(?=\n))?(\n)?'
-            '(?P<sym>(( )*[a-zA-Z0-9_]+(,)?( )*(#.*(?=\n))?(\n)?)+)'
+            '\\(( )*(#.*(?=\n))?'
+            '(?P<workaround>(\n)?)'
+            '(?P<sym>(( )*[a-zA-Z0-9_]+(,)?( )*(#.*(?=\n))?[ \n]*)+)'
             '\\)',
     )
     for imp in matcher.finditer(stream):
@@ -53,6 +54,8 @@ def _pic_scan_check_from_multiline(
                 type    = PIC_IMPORT_TYPE_FROM,
             )
         )
+        if imp['workaround']:
+            lineno = lineno + 1
         for symbol in imp['sym'].split('\n'):
             symbol = symbol.split('#')[0].strip()
             for sym in symbol.split(','):
@@ -65,6 +68,7 @@ def _pic_scan_check_from_multiline(
                     symname     = sym,
                     symtype     = PIC_SYMBOL_TYPE_IMPORT,
                 )
+            lineno = lineno + 1
 
 def _pic_scan_check_from_inline(
     file_info: Dict[str,Any],

@@ -11,7 +11,7 @@ jobs:
         with:
           python-version: '3.8'
       - name: 'install poetry'
-        uses: abatilo/actions-poetry@v2
+        uses: abatilo/actions-poetry@v3
         with:
           poetry-version: '1.8.2'
       - name: 'Setup a local virtual environment'
@@ -19,13 +19,16 @@ jobs:
           poetry config virtualenvs.create true --local
           poetry config virtualenvs.in-project true --local
       - name: 'define a cache for the virtual environment'
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ./.venv
           key: venv-${{ hashFiles('poetry.lock') }}
       - name: 'install the project dependencies'
-        run: poetry install
+        run: |
+          poetry install
+          poetry run pip install pytest
       - name: 'check codebase'
         run: |
-          poetry run pylint pyimportcheck
+          poetry run pylint --errors-only pyimportcheck
           poetry run mypy --strict pyimportcheck
+          poetry run pytest

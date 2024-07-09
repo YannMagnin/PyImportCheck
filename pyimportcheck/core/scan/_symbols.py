@@ -3,7 +3,7 @@ pyimportcheck.core.scan._symbols    - analyse symbols declaration
 """
 __all__ = [
     # function
-    'pic_scan_symbol',
+    'pic_scan_symbols',
     'pic_scan_symbol_add',
     # data information
     'PicSymbol',
@@ -26,7 +26,7 @@ def _pic_scan_symbol_var(file_info: Dict[str,Any], stream: Any) -> None:
     """
     matcher = re.compile(
         flags   = re.MULTILINE,
-        pattern = r"^(?P<var>([a-zA-Z0-9_]+( )?=( )?)+)",
+        pattern = r"^(?P<var>([a-zA-Z0-9_]+( )*=(?!=)( )*)+)",
     )
     for sym_record in matcher.finditer(stream):
         lineno = stream[:sym_record.start()].count('\n')
@@ -37,7 +37,7 @@ def _pic_scan_symbol_var(file_info: Dict[str,Any], stream: Any) -> None:
                 file_info   = file_info,
                 lineno      = lineno,
                 symname     = sym,
-                symtype     = PIC_SYMBOL_TYPE_FUNC,
+                symtype     = PIC_SYMBOL_TYPE_VAR,
             )
 
 def _pic_scan_symbol_func(file_info: Dict[str,Any], stream: Any) -> None:
@@ -45,7 +45,7 @@ def _pic_scan_symbol_func(file_info: Dict[str,Any], stream: Any) -> None:
     """
     matcher = re.compile(
         flags   = re.MULTILINE,
-        pattern = r"^def (?P<symbol>([1-9a-zA-Z_]+))\(",
+        pattern = r"^def( )+(?P<symbol>([a-zA-Z0-9_]+))( )*\(",
     )
     for sym in matcher.finditer(stream):
         pic_scan_symbol_add(
@@ -74,7 +74,7 @@ class PicSymbol():
 
 ## function
 
-def pic_scan_symbol(
+def pic_scan_symbols(
     file_info:  Dict[str,Any],
     stream: Any,
 ) -> None:

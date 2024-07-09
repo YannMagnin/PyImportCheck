@@ -23,26 +23,34 @@ def pic_scan_exports(
     - fetch all exposed symbols
     - notify warning if it use "(" instead of "]"
     """
-    symbols = re.search(
-        "__all__ = (?P<enclose>\\(|\\[)(\n)?(?P<raw>("
-        "    ['\"][A-Za-z0-9_]+['\"](,)?(\n)?)*"
-        ")(\\)|\\])",
-        stream,
+    matcher = re.compile(
+        flags   = re.MULTILINE,
+        pattern = \
+            '^__all__( )+=( )*(?P<enclose>[\\[\\(])'
+            '(?P<workaround>(\n)?)'
+            '(?P<raw>('
+            '( )*[\'"][A-Za-z0-9_]+[\'"](,)?'
+            '( )*(#.*(?=\n))?[ \n]*)*'
+            ')'
+            '[ \n]*[\\]\\)]',
     )
-    if not symbols:
-        return
-    lineno = stream[:symbols.start()].count('\n')
-    if symbols['enclose'] == '(':
-        log_warning(
-            f"{file_info['path']}:{lineno}: the `__all__` declaration "
-            'should use square brackets for declaration as implicitly '
-            'described in the PEP-8'
-        )
-    symbols_raw = symbols['raw'].split()
-    symbols_raw = [x.replace('\'', '') for x in symbols_raw]
-    symbols_raw = [x for y in symbols_raw for x in y.split(',') if x]
-    file_info['exported'] = []
-    for x in symbols_raw:
-        x.replace(',', '')
-        x.replace('\'','')
-        file_info['exported'].append(x)
+    file_info['exports'] = []
+    for symbols in matcher.finditer(stream):
+        lineno = stream[:symbols.start()].count('\n')
+        if symbols['enclose'] == '(':
+            log_warning(
+                f"{file_info['path']}:{lineno}: the `__all__` declaration "
+                'should use square brackets for declaration as implicitly '
+                'described in the PEP-8'
+            )
+        if symbols['workaround']:
+            lineno = lineno + 1
+        for symbol in symbols['raw'].split('\n'):
+            symbol = symbol.split('#')[0].strip()
+            for sym in symbol.split(','):
+                if not (sym := sym.strip()):
+                    continue
+                sym = sym.replace('\'', '')
+                sym = sym.replace('"', '')
+                file_info['exports'].append((lineno, sym))
+            lineno = lineno + 1
