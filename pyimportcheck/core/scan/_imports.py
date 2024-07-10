@@ -2,21 +2,19 @@
 pyimportcheck.core.scan._imports    - analyse import statement
 """
 __all__ = [
-    # function
     'pic_scan_imports',
-    # data information
-    'PicImport',
-    'PIC_IMPORT_TYPE_RAW',
-    'PIC_IMPORT_TYPE_FROM',
-    'PIC_IMPORT_TYPE_FROM_INLINE',
 ]
-from typing import Dict, Any
-from dataclasses import dataclass
+from typing import Any
 import re
 
 from pyimportcheck.core._logger import log_warning
-from pyimportcheck.core.scan._symbols import (
-    pic_scan_symbol_add,
+from pyimportcheck.core.scan._symbols import pic_scan_symbol_add
+from pyimportcheck.core.scan.types import (
+    PicScannedFile,
+    PicScannedImport,
+    PIC_IMPORT_TYPE_FROM_INLINE,
+    PIC_IMPORT_TYPE_FROM,
+    PIC_IMPORT_TYPE_RAW,
     PIC_SYMBOL_TYPE_IMPORT,
 )
 
@@ -25,9 +23,9 @@ from pyimportcheck.core.scan._symbols import (
 #---
 
 def _pic_scan_check_from_multiline(
-    file_info: Dict[str,Any],
-    package: str,
+    file_info: PicScannedFile,
     stream: Any,
+    package: str,
 ) -> None:
     """ check multilined `from` import
 
@@ -47,9 +45,9 @@ def _pic_scan_check_from_multiline(
     )
     for imp in matcher.finditer(stream):
         lineno = stream[:imp.start()].count('\n')
-        file_info['imports'].append(
-            PicImport(
-                lineno  = lineno,
+        file_info.imports.append(
+            PicScannedImport(
+                lineno  = lineno + 1,
                 path    = imp['path'],
                 type    = PIC_IMPORT_TYPE_FROM,
             )
@@ -71,9 +69,9 @@ def _pic_scan_check_from_multiline(
             lineno = lineno + 1
 
 def _pic_scan_check_from_inline(
-    file_info: Dict[str,Any],
-    package: str,
+    file_info: PicScannedFile,
     stream: Any,
+    package: str,
 ) -> None:
     """ check inlined `from` import
 
@@ -91,9 +89,9 @@ def _pic_scan_check_from_inline(
     )
     for imp in matcher.finditer(stream):
         lineno = stream[:imp.start()].count('\n')
-        file_info['imports'].append(
-            PicImport(
-                lineno  = lineno,
+        file_info.imports.append(
+            PicScannedImport(
+                lineno  = lineno + 1,
                 path    = imp['path'],
                 type    = PIC_IMPORT_TYPE_FROM_INLINE,
             )
@@ -107,9 +105,9 @@ def _pic_scan_check_from_inline(
             )
 
 def _pic_scan_check_raw(
-    file_info: Dict[str,Any],
-    package: str,
+    file_info: PicScannedFile,
     stream: Any,
+    package: str,
 ) -> None:
     """ check raw import statement
 
@@ -120,19 +118,16 @@ def _pic_scan_check_raw(
     """
     matcher = re.compile(
         flags   = re.MULTILINE,
-        pattern = \
-            rf"^import (?P<path>{package}(\.[a-z_0-9]+)*)"
-            '([ \t]*(#.*))?$',
+        pattern = rf"^import (?P<path>{package}(\.[a-z_0-9]+)*)",
     )
     for imp in matcher.finditer(stream):
-        print(imp)
         log_warning(
-            f"{file_info['path']}:{imp.start()}: avoid using raw "
+            f"{file_info.path}:{imp.start()}: avoid using raw "
             '`import`, prefer using `from ... import ...` instead'
         )
-        file_info['imports'].append(
-            PicImport(
-                lineno  = stream[:imp.start()].count('\n'),
+        file_info.imports.append(
+            PicScannedImport(
+                lineno  = stream[:imp.start()].count('\n') + 1,
                 path    = imp['path'],
                 type    = PIC_IMPORT_TYPE_RAW,
             )
@@ -142,25 +137,10 @@ def _pic_scan_check_raw(
 # Public
 #---
 
-## classes and constants
-
-PIC_IMPORT_TYPE_RAW = 'raw'
-PIC_IMPORT_TYPE_FROM = 'from'
-PIC_IMPORT_TYPE_FROM_INLINE = 'from-inline'
-
-@dataclass
-class PicImport():
-    """ import information """
-    lineno: int
-    path:   str
-    type:   str
-
-## functions
-
 def pic_scan_imports(
-    file_info: Dict[str,Any],
-    package: str,
+    file_info: PicScannedFile,
     stream: Any,
+    package: str,
 ) -> None:
     """ analyse import statements
 
@@ -168,7 +148,6 @@ def pic_scan_imports(
     - check for raw import (`import <package>`)
     - analyse fragmented import (`from <package> import ...`)
     """
-    file_info['imports'] = []
-    _pic_scan_check_raw(file_info, package, stream)
-    _pic_scan_check_from_inline(file_info, package, stream)
-    _pic_scan_check_from_multiline(file_info, package, stream)
+    _pic_scan_check_raw(file_info, stream, package)
+    _pic_scan_check_from_inline(file_info, stream, package)
+    _pic_scan_check_from_multiline(file_info, stream, package)

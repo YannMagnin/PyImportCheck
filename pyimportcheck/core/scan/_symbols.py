@@ -2,26 +2,25 @@
 pyimportcheck.core.scan._symbols    - analyse symbols declaration
 """
 __all__ = [
-    # function
     'pic_scan_symbols',
     'pic_scan_symbol_add',
-    # data information
-    'PicSymbol',
-    'PIC_SYMBOL_TYPE_IMPORT',
-    'PIC_SYMBOL_TYPE_FUNC',
-    'PIC_SYMBOL_TYPE_VAR',
 ]
-from typing import Dict, Any
-from dataclasses import dataclass
+from typing import Any
 import re
 
 from pyimportcheck.core._logger import log_error
+from pyimportcheck.core.scan.types import (
+    PicScannedFile,
+    PicScannedSymbol,
+    PIC_SYMBOL_TYPE_VAR,
+    PIC_SYMBOL_TYPE_FUNC,
+)
 
 #---
 # Internals
 #---
 
-def _pic_scan_symbol_var(file_info: Dict[str,Any], stream: Any) -> None:
+def _pic_scan_symbol_var(file_info: PicScannedFile, stream: Any) -> None:
     """ analyse function symbol
     """
     matcher = re.compile(
@@ -40,7 +39,7 @@ def _pic_scan_symbol_var(file_info: Dict[str,Any], stream: Any) -> None:
                 symtype     = PIC_SYMBOL_TYPE_VAR,
             )
 
-def _pic_scan_symbol_func(file_info: Dict[str,Any], stream: Any) -> None:
+def _pic_scan_symbol_func(file_info: PicScannedFile, stream: Any) -> None:
     """ analyse function symbol
     """
     matcher = re.compile(
@@ -59,49 +58,31 @@ def _pic_scan_symbol_func(file_info: Dict[str,Any], stream: Any) -> None:
 # Public
 #---
 
-## classes and constants
-
-PIC_SYMBOL_TYPE_IMPORT  = 'import'
-PIC_SYMBOL_TYPE_FUNC    = 'function'
-PIC_SYMBOL_TYPE_VAR     = 'var'
-
-@dataclass
-class PicSymbol():
-    """ symbol information """
-    lineno: int
-    name:   str
-    type:   str
-
-## function
-
 def pic_scan_symbols(
-    file_info:  Dict[str,Any],
+    file_info:  PicScannedFile,
     stream: Any,
 ) -> None:
     """ analyse symbol declaration
     """
-    file_info['symbols'] = {}
     _pic_scan_symbol_func(file_info, stream)
     _pic_scan_symbol_var(file_info, stream)
 
 def pic_scan_symbol_add(
-    file_info:  Dict[str,Any],
+    file_info:  PicScannedFile,
     lineno:     int,
     symname:    str,
     symtype:    str,
 ) -> None:
     """ add a symbol information into the internal dictionary
     """
-    if 'symbols' not in file_info:
-        file_info['symbols'] = {}
-    if symname in file_info['symbols']:
+    if symname in file_info.symbols:
         log_error(
-            f"{file_info['path']}:{lineno}: symbol '{symname}' already "
+            f"{file_info.path}:{lineno + 1}: symbol '{symname}' already "
             'exists,  the symbol will be ignored'
         )
         return
-    file_info['symbols'][symname] = PicSymbol(
-        lineno  = lineno,
+    file_info.symbols[symname] = PicScannedSymbol(
+        lineno  = lineno + 1,
         name    = symname,
         type    = symtype,
     )

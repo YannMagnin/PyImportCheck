@@ -2,82 +2,99 @@
 pyimportcheck.core.scan   - python package scanner
 """
 __all__ = [
-    'pycycle_scan_package',
+    'pic_scan_package',
+    'PicScannedFile',
+    'PicScannedSymbol',
+    'PicScannedImport',
+    'PicScannedExport',
+    'PicScannedModule',
 ]
-from typing import Dict, List, Any
+from dataclasses import dataclass
 from pathlib import Path
 import re
+import mmap
 
 from pyimportcheck.core.exception import PycycleException
 from pyimportcheck.core._logger import (
     log_warning,
     log_error,
 )
+from pyimportcheck.core.scan._imports import pic_scan_imports
+from pyimportcheck.core.scan._exports import pic_scan_exports
+from pyimportcheck.core.scan._symbols import pic_scan_symbols
+from pyimportcheck.core.scan.types import (
+    PicScannedModule,
+    PicScannedFile,
+    PicScannedSymbol,
+    PicScannedExport,
+    PicScannedImport,
+)
 
 #---
 # Internals
 #---
 
-def _pycycle_analyse_file(
-    file_info: Dict[str,Any],
-    prefix: Path,
-    package: str,
-) -> None:
+def _pic_analyse_file(
+    filepath:   Path,
+    package:    str
+) -> PicScannedFile:
     """ load the file and manually parse import
     """
+    fileinfo = PicScannedFile(
+        path    = filepath,
+        symbols = {},
+        exports = [],
+        imports = [],
+    )
+    with open(filepath, 'r', encoding='utf-8') as filestream:
+        mfile = filestream.read()
+        pic_scan_imports(fileinfo, mfile, package)
+        pic_scan_symbols(fileinfo, mfile)
+        pic_scan_exports(fileinfo, mfile)
+    return fileinfo
 
-def _pycycle_scan_package(
-    info: Dict[str,Any],
-    prefix: Path,
-    package: str,
-) -> None:
+def _pic_analyse_package(
+    module:     PicScannedModule,
+    package:    str,
+) -> PicScannedModule:
     """ recursively scan package folders
     """
-    for filepath in prefix.iterdir():
+    for filepath in module.path.iterdir():
         if filepath.name in ['__pycache__', 'py.typed']:
             continue
         if filepath.name.startswith('.'):
             continue
         if filepath.is_dir():
-            info[filepath.name] = {
-                'type': 'module',
-                'modules': {}
-            }
-            _pycycle_scan_package(
-                info[filepath.name]['modules'],
-                filepath,
+            module.modules[filepath.name] = _pic_analyse_package(
+                PicScannedModule(
+                    name    = filepath.name,
+                    path    = filepath,
+                    modules = {},
+                ),
                 package,
             )
             continue
         if not filepath.name.endswith('.py'):
             log_warning(f"file '{str(filepath)}' is not a valid")
             continue
-        info[filepath.stem] = {
-            'type': 'file',
-            'path': filepath,
-        }
-        _pycycle_analyse_file(
-            info[filepath.stem],
-            filepath,
-            package,
+        module.modules[filepath.stem] = _pic_analyse_file(
+            filepath    = filepath,
+            package     = package,
         )
+    return module
 
 #---
 # Public
 #---
 
-def pycycle_scan_package(prefix: Path) -> Dict[str,Any]:
+def pic_scan_package(prefix: Path) -> PicScannedModule:
     """ package scanner
     """
-    if not (prefix/'__init__.py').exists():
-        raise PycycleException(
-            'The provided package prefix do not have __init__.py file'
-        )
-    info: Dict[str,Any] = {
-        'prefix':   prefix,
-        'package':  prefix.name,
-        'type':     'module',
-        'modules':  {},
-    }
-    _pycycle_scan_package(info['modules'], prefix, prefix.name)
-    return info
+    return _pic_analyse_package(
+        PicScannedModule(
+            name    = prefix.name,
+            path    = prefix,
+            modules = {}
+        ),
+        prefix.name,
+    )

@@ -4,17 +4,21 @@ pyimportcheck.core.scan._exports    - analyse the `__all__` declaration
 __all__ = [
     'pic_scan_exports',
 ]
-from typing import Dict, Any
+from typing import Any
 import re
 
 from pyimportcheck.core._logger import log_warning
+from pyimportcheck.core.scan.types import (
+    PicScannedFile,
+    PicScannedExport,
+)
 
 #---
 # Public
 #---
 
 def pic_scan_exports(
-    file_info: Dict[str,Any],
+    file_info: PicScannedFile,
     stream: Any,
 ) -> None:
     """ analyse `__all__` declaration
@@ -34,12 +38,11 @@ def pic_scan_exports(
             ')'
             '[ \n]*[\\]\\)]',
     )
-    file_info['exports'] = []
     for symbols in matcher.finditer(stream):
         lineno = stream[:symbols.start()].count('\n')
         if symbols['enclose'] == '(':
             log_warning(
-                f"{file_info['path']}:{lineno}: the `__all__` declaration "
+                f"{file_info.path}:{lineno}: the `__all__` declaration "
                 'should use square brackets for declaration as implicitly '
                 'described in the PEP-8'
             )
@@ -52,5 +55,10 @@ def pic_scan_exports(
                     continue
                 sym = sym.replace('\'', '')
                 sym = sym.replace('"', '')
-                file_info['exports'].append((lineno, sym))
+                file_info.exports.append(
+                    PicScannedExport(
+                        lineno  = lineno + 1,
+                        name    = sym,
+                    )
+                )
             lineno = lineno + 1

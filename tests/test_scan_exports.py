@@ -2,8 +2,13 @@
 tests.test_scan_exports     - check exports analysis
 """
 from typing import Any
+from pathlib import Path
 
 from pyimportcheck.core.scan._exports import pic_scan_exports
+from pyimportcheck.core.scan.types import (
+    PicScannedExport,
+    PicScannedFile,
+)
 
 #---
 # Public
@@ -12,20 +17,25 @@ from pyimportcheck.core.scan._exports import pic_scan_exports
 def test_scan_exports() -> None:
     """ check var symbols
     """
-    assert_table = (
-        (0, 'aaa'),
-        (0, 'bb_b'),
-        (0, 'ccc'),
-        (1, 'ekip'),
-        (2, 'test'),
-        (2, 'mix'),
-        (5, 'mms'),
-        (6, 'ldo'),
-        (6, '667'),
-        (7, 'gam3rz'),
-        (9, 'comment'),
+    assert_table: Any = (
+        {'lineno': 1, 'name': 'aaa'},
+        {'lineno': 1, 'name': 'bb_b'},
+        {'lineno': 1, 'name': 'ccc'},
+        {'lineno': 2, 'name': 'ekip'},
+        {'lineno': 3, 'name': 'test'},
+        {'lineno': 3, 'name': 'mix'},
+        {'lineno': 6, 'name': 'mms'},
+        {'lineno': 7, 'name': 'ldo'},
+        {'lineno': 7, 'name': '667'},
+        {'lineno': 8, 'name': 'gam3rz'},
+        {'lineno': 10, 'name': 'comment'},
     )
-    file_info: Any = {'path': 'aaa'}
+    file_info = PicScannedFile(
+        path    = Path('aaaa'),
+        symbols = {},
+        exports = [],
+        imports = [],
+    )
     pic_scan_exports(
         file_info   = file_info,
         stream      = \
@@ -41,8 +51,7 @@ def test_scan_exports() -> None:
             "     \"comment\"   #aaaaa\n"
             "]"
     )
-    assert 'exports' in file_info
-    assert len(assert_table) == len(file_info['exports'])
+    assert len(assert_table) == len(file_info.exports)
     for i, exp in enumerate(assert_table):
-        print(file_info['exports'][i])
-        assert exp == file_info['exports'][i]
+        print(file_info.exports[i])
+        assert PicScannedExport(**exp) == file_info.exports[i]
