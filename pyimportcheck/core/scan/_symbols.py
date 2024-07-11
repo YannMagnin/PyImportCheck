@@ -8,7 +8,10 @@ __all__ = [
 from typing import Any
 import re
 
-from pyimportcheck.core._logger import log_error
+from pyimportcheck.core._logger import (
+    log_error,
+    log_warning,
+)
 from pyimportcheck.core.scan.types import (
     PicScannedFile,
     PicScannedSymbol,
@@ -75,6 +78,11 @@ def pic_scan_symbol_add(
 ) -> None:
     """ add a symbol information into the internal dictionary
     """
+    if symname == '*':
+        log_warning(
+            f"{file_info.path}:{lineno}: avoid using '*' import"
+        )
+        return
     if symname in file_info.symbols:
         log_error(
             f"{file_info.path}:{lineno + 1}: symbol '{symname}' already "

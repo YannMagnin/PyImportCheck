@@ -12,13 +12,7 @@ __all__ = [
 from dataclasses import dataclass
 from pathlib import Path
 import re
-import mmap
 
-from pyimportcheck.core.exception import PycycleException
-from pyimportcheck.core._logger import (
-    log_warning,
-    log_error,
-)
 from pyimportcheck.core.scan._imports import pic_scan_imports
 from pyimportcheck.core.scan._exports import pic_scan_exports
 from pyimportcheck.core.scan._symbols import pic_scan_symbols
@@ -28,6 +22,10 @@ from pyimportcheck.core.scan.types import (
     PicScannedSymbol,
     PicScannedExport,
     PicScannedImport,
+)
+from pyimportcheck.core._logger import (
+    log_warning,
+    log_error,
 )
 
 #---

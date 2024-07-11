@@ -45,6 +45,11 @@ class PicScannedImport():
     path:   str
     type:   str
 
+    @property
+    def name(self) -> str:
+        """ shortcut to fetch the import name """
+        return self.path.split('.')[-1]
+
 @dataclass
 class PicScannedExport():
     """ scanned export symbol information """

@@ -2,12 +2,12 @@
 pyimportcheck.core.exception  - generic pycycle exception class
 """
 __all__ = [
-    'PycycleException',
+    'PicException',
 ]
 
 #---
 # Public
 #---
 
-class PycycleException(Exception):
+class PicException(Exception):
     """ generic pycycle exception """
