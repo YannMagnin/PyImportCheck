@@ -12,7 +12,7 @@ packages    = [
 
 
 [tool.poetry.scripts]
-pyimportcheck = 'pyimportcheck.cli:pyimportcheck_cli_entry'
+pyimportcheck = 'pyimportcheck._cli:pyimportcheck_cli_entry'
 
 
 [tool.poetry.dependencies]

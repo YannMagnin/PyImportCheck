@@ -1,7 +1,7 @@
 """
 pycycle  - Crupy DSL parser
 """
-from pyimportcheck.cli import pyimportcheck_cli_entry
+from pyimportcheck._cli import pyimportcheck_cli_entry
 
 #---
 # Public
