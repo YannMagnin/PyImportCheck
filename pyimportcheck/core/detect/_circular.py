@@ -1,8 +1,8 @@
 """
-pyimportcheck.core.detect._import   - detect cyclic import
+pyimportcheck.core.detect._circular - detect circular import
 """
 __all__ = [
-    'pic_detect_import_circular',
+    'pic_detect_circular_import',
 ]
 from typing import List, Union
 from pathlib import Path
@@ -107,7 +107,7 @@ def _pic_check_import(
 # Public
 #---
 
-def pic_detect_import_circular(info: PicScannedModule) -> int:
+def pic_detect_circular_import(info: PicScannedModule) -> int:
     """ try to detect circular import
     """
     error_counter = _pic_check_import(
@@ -115,6 +115,4 @@ def pic_detect_import_circular(info: PicScannedModule) -> int:
         info,
         info.name,
     )
-    if error_counter > 0:
-        log_error(f"Detected {error_counter} cyclic import")
     return error_counter
