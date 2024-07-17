@@ -12,6 +12,7 @@ import click
 
 from pyimportcheck.core.scan import pic_scan_package
 from pyimportcheck.core.detect import pic_detect_all
+from pyimportcheck.core.output import pic_output_stdout
 
 #---
 # Public
@@ -35,5 +36,5 @@ def pyimportcheck_cli_entry(package_prefix: Path) -> NoReturn:
     """ Python circular import detector
     """
     info = pic_scan_package(package_prefix)
-    error = pic_detect_all(info)
-    sys.exit(0 if error == 0 else 1)
+    report = pic_detect_all(info)
+    sys.exit(pic_output_stdout(report))

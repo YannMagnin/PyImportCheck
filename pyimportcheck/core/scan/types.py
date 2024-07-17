@@ -64,6 +64,11 @@ class PicScannedFile():
     exports:    List[PicScannedExport]
     imports:    List[PicScannedImport]
 
+    @property
+    def name(self) -> str:
+        """ shortcut to fetch the import name """
+        return self.path.stem
+
 @dataclass
 class PicScannedModule():
     """ scanned module information """

@@ -4,8 +4,9 @@ pyimportcheck.core.detect._exports  - check missing / bad `__all__` symbol
 __all__ = [
     'pic_detect_exports_mistake',
 ]
+from typing import List
 
-from pyimportcheck.core._logger import log_warning
+from pyimportcheck.core.detect.types import PicDetectNotification
 from pyimportcheck.core.scan import (
     PicScannedModule,
     PicScannedFile,
@@ -15,7 +16,9 @@ from pyimportcheck.core.scan import (
 # Internals
 #---
 
-def _pic_check_export_validity(info: PicScannedFile) -> int:
+def _pic_check_export_validity(
+    info: PicScannedFile,
+) -> List[PicDetectNotification]:
     """ check `__all__` declaration
 
     @notes
@@ -25,44 +28,35 @@ def _pic_check_export_validity(info: PicScannedFile) -> int:
     """
     if '__all__' not in info.symbols:
         if not info.symbols:
-            return 0
-        log_warning(
-            f"{info.path}: missing `__all__` symbol, which can be declared "
-            'as follow:'
-        )
-        log_warning('>>> __all__ = [')
+            return []
+        log  = f"{info.path}: missing `__all__` symbol, which can be "
+        log += 'declared as follow:\n'
+        log += '>>> __all__ = ['
         for sym in info.symbols.keys():
             if not sym.startswith('_'):
-                log_warning(f">>>     '{sym}',")
-        log_warning('>>> ]')
-        return 1
-    return 0
-
-def _pic_check_export_walk(
-    root:    PicScannedModule,
-    current: PicScannedModule,
-) -> int:
-    """ walk through scanned information and performs various check
-    """
-    error_counter = 0
-    for _, module_info in current.modules.items():
-        if isinstance(module_info, PicScannedModule):
-            error_counter += _pic_check_export_walk(
-                root    = root,
-                current = module_info,
-            )
-            continue
-        error_counter += _pic_check_export_validity(module_info)
-    return error_counter
+                log += f">>>     '{sym}',\n"
+        log += '>>> ]'
+        return [
+            PicDetectNotification(
+                type    = 'warning',
+                log     = log,
+            ),
+        ]
+    return []
 
 #---
 # Public
 #---
 
-def  pic_detect_exports_mistake(info: PicScannedModule) -> int:
+def  pic_detect_exports_mistake(
+    current: PicScannedModule,
+) -> List[PicDetectNotification]:
     """ check missing / bad `__all__` declaration
     """
-    return _pic_check_export_walk(
-        root    = info,
-        current = info,
-    )
+    notifications: List[PicDetectNotification] = []
+    for _, module_info in current.modules.items():
+        if isinstance(module_info, PicScannedModule):
+            notifications += pic_detect_exports_mistake(module_info)
+            continue
+        notifications += _pic_check_export_validity(module_info)
+    return notifications
