@@ -3,31 +3,44 @@ tests.test_detect.test_export   - test `__all__` behaviours
 """
 from pathlib import Path
 
-from pyimportcheck.core.scan import (
-    pic_scan_package,
-    PicScannedModule,
-)
+from pyimportcheck.core.scan import pic_scan_package
 from pyimportcheck.core.detect._exports import pic_detect_exports_mistake
+from pyimportcheck.core.detect import PicDetectNotification
 
 #---
 # Internals
 #---
 
-_MISSING_ERROR_LOG = \
-    '/home/reverse/github/PyImportCheck/tests/_data/missing_export/a.py: ' \
-    'missing `__all__` symbol, which can be declared as follow:\n' \
-    '>>> __all__ = [\n' \
-    '>>>     \'a_func0\',\n' \
-    '>>>     \'a_func1\',\n' \
-    '>>>     \'A_GLOB0\',\n' \
-    '>>> ]'
-
-def __scan_fake_pkg() -> PicScannedModule:
-    """ open a special fake package
-    """
-    return pic_scan_package(
-        Path(f"{__file__}/../../_data/missing_export").resolve(),
-    )
+_PREFIX_PKG = Path(f"{__file__}/../../_data/missing_export").resolve()
+_EXPORT_INFO = [
+    PicDetectNotification(
+        type    = 'error',
+        log     = f"{_PREFIX_PKG}/b.py: missing exported symbol 'b_func1'",
+    ),
+    PicDetectNotification(
+        type    = 'warning',
+        log     = \
+            f"{_PREFIX_PKG}/a.py: missing `__all__` "
+            'symbol, which can be declared as follow:\n'
+            '>>> __all__ = [\n'
+            '>>>     \'a_func0\',\n'
+            '>>>     \'a_func1\',\n'
+            '>>>     \'A_GLOB0\',\n'
+            '>>> ]',
+    ),
+    PicDetectNotification(
+        type    = 'warning',
+        log     = \
+            f"{_PREFIX_PKG}/c.py:7: exported symbol 'c_func0' has "
+            'already been exported, you can remove this line',
+    ),
+    PicDetectNotification(
+        type    = 'warning',
+        log     = \
+            f"{_PREFIX_PKG}/c.py:8: exported symbol 'c_func1' has "
+            'already been exported, you can remove this line',
+    ),
+]
 
 #---
 # Public
@@ -36,8 +49,12 @@ def __scan_fake_pkg() -> PicScannedModule:
 def test_missing() -> None:
     """ test missing `__all__` declaration
     """
-    scaninfo = __scan_fake_pkg()
+    scaninfo = pic_scan_package(_PREFIX_PKG)
     detectinfo = pic_detect_exports_mistake(scaninfo)
-    assert len(detectinfo) == 1
-    assert detectinfo[0].type == 'warning'
-    assert detectinfo[0].log == _MISSING_ERROR_LOG
+    print(detectinfo)
+    expect_list = _EXPORT_INFO.copy()
+    for check in _EXPORT_INFO:
+        print(check)
+        assert check in detectinfo
+        expect_list.remove(check)
+    assert len(expect_list) == 0
