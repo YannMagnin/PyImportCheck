@@ -19,7 +19,7 @@ from pyimportcheck.core.scan import (
 def test_scan_complet() -> None:
     """ full scan check
     """
-    fakepkg_path = Path(f"{__file__}/../_data/fakepkg").resolve()
+    fakepkg_path = Path(f"{__file__}/../../_data/fakepkg").resolve()
     assert_obj = PicScannedModule(
         name    = 'fakepkg',
         path    = fakepkg_path,

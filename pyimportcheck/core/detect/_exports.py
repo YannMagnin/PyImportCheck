@@ -31,7 +31,7 @@ def _pic_check_export_validity(
             return []
         log  = f"{info.path}: missing `__all__` symbol, which can be "
         log += 'declared as follow:\n'
-        log += '>>> __all__ = ['
+        log += '>>> __all__ = [\n'
         for sym in info.symbols.keys():
             if not sym.startswith('_'):
                 log += f">>>     '{sym}',\n"

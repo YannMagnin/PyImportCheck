@@ -1,13 +1,13 @@
 [tool.poetry]
-name        = "pyimportcheck"
-version     = "0.0.2"
-description = "Python circular import detector"
-readme      = "README.md"
+name        = 'pyimportcheck'
+version     = '0.0.2'
+description = 'Python import checker'
+readme      = 'README.md'
 authors     = [
-    "Yann MAGNIN <yann.magnin@protonmail.com>",
+    'Yann MAGNIN <yann.magnin@protonmail.com>',
 ]
 packages    = [
-    { include = "pyimportcheck" },
+    { include = 'pyimportcheck' },
 ]
 
 
@@ -16,10 +16,29 @@ pyimportcheck = 'pyimportcheck._cli:pyimportcheck_cli_entry'
 
 
 [tool.poetry.dependencies]
-python  = ">=3.8.*"
-click   = "8.1.*"
+python  = '>=3.8.*'
+click   = '8.1.*'
 
 [tool.poetry.dev-dependencies]
-pynvim  = "*"
-pylint  = "*"
-mypy    = "*"
+pynvim              = '*'
+pylint              = '*'
+mypy                = '*'
+pytest              = '*'
+pytest-dependency   = '*'
+pytest-cov          = '*'
+
+
+
+[tool.pytest.ini_options]
+log_level = 'INFO'
+required_plugins = [
+    'pytest-dependency',
+    'pytest-cov',
+]
+python_functions = [
+    'test_*',
+]
+python_files = '*.py'
+testpaths = [
+    'tests',
+]
