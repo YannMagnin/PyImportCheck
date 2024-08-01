@@ -7,6 +7,7 @@ __all__ = [
 ]
 from typing import List, Dict, Any
 from dataclasses import dataclass
+from pathlib import Path
 
 #---
 # Public
@@ -16,6 +17,7 @@ from dataclasses import dataclass
 class PicDetectNotification():
     """ warning / error information """
     type:   str
+    path:   Path
     log:    str
 
 @dataclass
@@ -57,6 +59,7 @@ class PicDetectReport():
             for notif in notif_list:
                 outinfo['notifications'].append({
                     'type': notif.type,
+                    'path': str(notif.path.resolve()),
                     'log': notif.log,
                 })
         return outinfo

@@ -34,6 +34,7 @@ def _pic_check_missing_export(
         return [
             PicDetectNotification(
                 type    = 'warning',
+                path    = info.path,
                 log     = log,
             ),
         ]
@@ -60,6 +61,7 @@ def _pic_check_mismatched_export(
                 notifications.append(
                     PicDetectNotification(
                         type    = 'warning',
+                        path    = info.path,
                         log     = \
                             f"{info.path}:{exp.lineno}: symbol "
                             f"'{exp.name}' has already been exported, "
@@ -72,6 +74,7 @@ def _pic_check_mismatched_export(
             notifications.append(
                 PicDetectNotification(
                     type    = 'warning',
+                    path    = info.path,
                     log     = \
                         f"{info.path}:{exp.lineno}: exported symbol "
                         f"'{exp.name}' should not be exported",
@@ -81,6 +84,7 @@ def _pic_check_mismatched_export(
         notifications.append(
             PicDetectNotification(
                 type    = 'error',
+                path    = info.path,
                 log     = \
                     f"{info.path}:{exp.lineno}: exported symbol "
                     f"'{exp.name}' doest not exists",
@@ -92,6 +96,7 @@ def _pic_check_mismatched_export(
         notifications.append(
             PicDetectNotification(
                 type    = 'error',
+                path    = info.path,
                 log     = \
                     f"{info.path}: missing exported symbol '{expname}'"
             ),

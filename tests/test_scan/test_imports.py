@@ -24,7 +24,12 @@ def __check_import(
     assert len(file_info.imports) == len(assert_table)
     for i, assert_check in enumerate(assert_table):
         print(file_info.imports[i])
-        assert file_info.imports[i] == PicScannedImport(**assert_check)
+        refimp = PicScannedImport(
+            lineno      = assert_check['lineno'],
+            import_path = assert_check['path'],
+            type        = assert_check['type'],
+        )
+        assert file_info.imports[i] == refimp
 
 def __check_symbols(
     file_info: PicScannedFile,

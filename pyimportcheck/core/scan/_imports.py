@@ -160,8 +160,8 @@ def pic_scan_import_add(
     """
     file_info.imports.append(
         PicScannedImport(
-            lineno  = lineno + 1,
-            path    = imppath,
-            type    = imptype,
+            lineno      = lineno + 1,
+            import_path = imppath,
+            type        = imptype,
         )
     )

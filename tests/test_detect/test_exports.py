@@ -15,10 +15,12 @@ _PREFIX_PKG = Path(f"{__file__}/../../_data/missing_export").resolve()
 _EXPORT_INFO = [
     PicDetectNotification(
         type    = 'error',
+        path    = _PREFIX_PKG/'b.py',
         log     = f"{_PREFIX_PKG}/b.py: missing exported symbol 'b_func1'",
     ),
     PicDetectNotification(
         type    = 'warning',
+        path    = _PREFIX_PKG/'a.py',
         log     = \
             f"{_PREFIX_PKG}/a.py: missing `__all__` "
             'symbol, which can be declared as follow:\n'
@@ -30,12 +32,14 @@ _EXPORT_INFO = [
     ),
     PicDetectNotification(
         type    = 'warning',
+        path    = _PREFIX_PKG/'c.py',
         log     = \
             f"{_PREFIX_PKG}/c.py:7: symbol 'c_func0' has "
             'already been exported, you can remove this line',
     ),
     PicDetectNotification(
         type    = 'warning',
+        path    = _PREFIX_PKG/'c.py',
         log     = \
             f"{_PREFIX_PKG}/c.py:8: symbol 'c_func1' has "
             'already been exported, you can remove this line',

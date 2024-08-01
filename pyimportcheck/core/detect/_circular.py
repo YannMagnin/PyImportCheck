@@ -28,7 +28,7 @@ def _pic_generate_raise_log(
     """
     return PicException(
         f"{module_info.path}:{import_current.lineno}: unable to import "
-        f"'{import_current.path}', {log}",
+        f"'{import_current.import_path}', {log}",
     )
 
 def _pic_resolve_package(
@@ -46,7 +46,7 @@ def _pic_resolve_package(
         if import_info.name == import_current.name:
             return import_list
     target: Union[PicScannedModule,PicScannedFile] = module_info
-    for shard in import_current.path.split('.')[1:]:
+    for shard in import_current.import_path.split('.')[1:]:
         if isinstance(target, PicScannedFile):
             raise _pic_generate_raise_log(
                 module_info     = module_info,
@@ -86,7 +86,7 @@ def _pic_resolve_package(
     return None
 
 def _pic_check_circular(
-    _pathfile: Path,
+    pathfile: Path,
     import_list: List[PicScannedImport],
     package: str,
     root_info: PicScannedModule,
@@ -105,19 +105,21 @@ def _pic_check_circular(
             notifications.append(
                 PicDetectNotification(
                     type    = 'error',
+                    path    = pathfile,
                     log     = str(err),
                 ),
             )
             continue
         if not circular_list:
             continue
-        error = f"({str(_pathfile)}) {package}:{imp.lineno} -> "
+        error = f"({str(pathfile)}) {package}:{imp.lineno} -> "
         for import_cycle in circular_list[:-1]:
             error += f"{import_cycle.name}:{import_cycle.lineno} -> "
         error += f"{circular_list[-1].name}:{circular_list[-1].lineno}"
         notifications.append(
             PicDetectNotification(
                 type    = 'error',
+                path    = pathfile,
                 log     = error,
             ),
         )

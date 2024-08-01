@@ -41,14 +41,14 @@ class PicScannedSymbol():
 @dataclass
 class PicScannedImport():
     """ import information """
-    lineno: int
-    path:   str
-    type:   str
+    lineno:      int
+    import_path: str
+    type:        str
 
     @property
     def name(self) -> str:
         """ shortcut to fetch the import name """
-        return self.path.split('.')[-1]
+        return self.import_path.rsplit('.', maxsplit=1)[-1]
 
 @dataclass
 class PicScannedExport():

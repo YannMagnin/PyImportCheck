@@ -26,6 +26,7 @@ def pic_detect_module_invalid(
             notifications.append(
                 PicDetectNotification(
                     type    = 'error',
+                    path    = module_info.path,
                     log     = \
                         f"{module_info.path}: missing critical "
                         '`__init__.py` file'
