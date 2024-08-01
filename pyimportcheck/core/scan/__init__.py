@@ -88,11 +88,14 @@ def _pic_analyse_package(
 def pic_scan_package(prefix: Path) -> PicScannedModule:
     """ package scanner
     """
-    return _pic_analyse_package(
-        PicScannedModule(
-            name    = prefix.name,
-            path    = prefix,
-            modules = {}
-        ),
-        prefix.name,
+    report = PicScannedModule(
+        name    = prefix.name,
+        path    = prefix,
+        modules = {},
     )
+    if prefix.is_dir():
+        return _pic_analyse_package(report, prefix.name)
+    if not prefix.name.endswith('.py'):
+        log_warning(f"file '{str(prefix)}' is not a valid")
+    report.modules[prefix.name] = _pic_analyse_file(prefix, prefix.name)
+    return report

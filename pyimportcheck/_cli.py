@@ -22,14 +22,13 @@ from pyimportcheck.core.output import (
 #---
 
 @click.command('pyimportcheck')
-@click.option(
-    '-p', '--prefix', 'package_prefix',
+@click.argument(
+    'package_prefix',
     required    = True,
-    metavar     = 'PACKAGE_PREFIX',
-    help        = 'package prefix to analyse',
+    metavar     = 'PATHFILE',
     type        = click.Path(
         exists      = True,
-        file_okay   = False,
+        file_okay   = True,
         dir_okay    = True,
         path_type   = Path,
     ),

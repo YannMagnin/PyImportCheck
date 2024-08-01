@@ -31,13 +31,13 @@ _EXPORT_INFO = [
     PicDetectNotification(
         type    = 'warning',
         log     = \
-            f"{_PREFIX_PKG}/c.py:7: exported symbol 'c_func0' has "
+            f"{_PREFIX_PKG}/c.py:7: symbol 'c_func0' has "
             'already been exported, you can remove this line',
     ),
     PicDetectNotification(
         type    = 'warning',
         log     = \
-            f"{_PREFIX_PKG}/c.py:8: exported symbol 'c_func1' has "
+            f"{_PREFIX_PKG}/c.py:8: symbol 'c_func1' has "
             'already been exported, you can remove this line',
     ),
 ]
@@ -57,4 +57,5 @@ def test_missing() -> None:
         print(check)
         assert check in detectinfo
         expect_list.remove(check)
+    print(expect_list)
     assert len(expect_list) == 0
