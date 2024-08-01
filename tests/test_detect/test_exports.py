@@ -44,6 +44,13 @@ _EXPORT_INFO = [
             f"{_PREFIX_PKG}/c.py:8: symbol 'c_func1' has "
             'already been exported, you can remove this line',
     ),
+    PicDetectNotification(
+        type    = 'warning',
+        path    = _PREFIX_PKG / '__main__.py',
+        log     = \
+            f"{_PREFIX_PKG}/__main__.py: this magic file should "
+            'not export symbols'
+    ),
 ]
 
 #---
@@ -61,5 +68,8 @@ def test_missing() -> None:
         print(check)
         assert check in detectinfo
         expect_list.remove(check)
+        detectinfo.remove(check)
     print(expect_list)
+    print(detectinfo)
     assert len(expect_list) == 0
+    assert len(detectinfo) == 0

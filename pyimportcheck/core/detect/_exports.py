@@ -107,7 +107,24 @@ def _pic_check_export_validity(
     info: PicScannedFile,
 ) -> List[PicDetectNotification]:
     """ check `__all__` declaration
+
+    @notes
+    - special check performed on __main__.py file which do not have a __all__
     """
+    if info.path.name == '__main__.py':
+        notifications = []
+        if '__all__' in info.symbols:
+            notifications.append(
+                PicDetectNotification(
+                    type    = 'warning',
+                    path    = info.path,
+                    log     = \
+                        f"{info.path}: this magic file should not "
+                        'export symbols',
+                ),
+            )
+            notifications += _pic_check_mismatched_export(info)
+        return notifications
     if notifications := _pic_check_missing_export(info):
         return notifications
     if notifications := _pic_check_mismatched_export(info):
