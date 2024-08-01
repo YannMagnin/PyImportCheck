@@ -1,0 +1,3 @@
+"""
+fakepkg.test    - submodule check
+"""

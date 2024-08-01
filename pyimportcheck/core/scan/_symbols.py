@@ -15,8 +15,7 @@ from pyimportcheck.core._logger import (
 from pyimportcheck.core.scan.types import (
     PicScannedFile,
     PicScannedSymbol,
-    PIC_SYMBOL_TYPE_VAR,
-    PIC_SYMBOL_TYPE_FUNC,
+    PicScannedSymbolType,
 )
 
 #---
@@ -39,7 +38,7 @@ def _pic_scan_symbol_var(file_info: PicScannedFile, stream: Any) -> None:
                 file_info   = file_info,
                 lineno      = lineno,
                 symname     = sym,
-                symtype     = PIC_SYMBOL_TYPE_VAR,
+                symtype     = PicScannedSymbolType.VAR,
             )
 
 def _pic_scan_symbol_func(file_info: PicScannedFile, stream: Any) -> None:
@@ -54,7 +53,7 @@ def _pic_scan_symbol_func(file_info: PicScannedFile, stream: Any) -> None:
             file_info   = file_info,
             lineno      = stream[:sym.start()].count('\n'),
             symname     = sym['symbol'],
-            symtype     = PIC_SYMBOL_TYPE_FUNC,
+            symtype     = PicScannedSymbolType.FUNC,
         )
 
 #---
@@ -74,7 +73,7 @@ def pic_scan_symbol_add(
     file_info:  PicScannedFile,
     lineno:     int,
     symname:    str,
-    symtype:    str,
+    symtype:    PicScannedSymbolType,
 ) -> None:
     """ add a symbol information into the internal dictionary
     """

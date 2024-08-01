@@ -8,6 +8,8 @@ __all__ = [
     'PicScannedImport',
     'PicScannedExport',
     'PicScannedModule',
+    'PicScannedSymbolType',
+    'PicScannedImportType',
 ]
 from dataclasses import dataclass
 from pathlib import Path
@@ -22,6 +24,8 @@ from pyimportcheck.core.scan.types import (
     PicScannedSymbol,
     PicScannedExport,
     PicScannedImport,
+    PicScannedSymbolType,
+    PicScannedImportType,
 )
 from pyimportcheck.core._logger import (
     log_warning,

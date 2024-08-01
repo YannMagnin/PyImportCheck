@@ -10,40 +10,43 @@ __all__ = [
     'PicScannedSymbol',
     'PicScannedImport',
     'PicScannedExport',
+    'PicScannedSymbolType',
+    'PicScannedImportType',
 ]
 from typing import Dict, Union, List
 from dataclasses import dataclass
 from pathlib import Path
+from enum import Enum
 
 #---
 # Public
 #---
 
-## constants
-
-PIC_IMPORT_TYPE_RAW         = 'raw'
-PIC_IMPORT_TYPE_FROM        = 'from'
-PIC_IMPORT_TYPE_FROM_INLINE = 'from-inline'
-
-PIC_SYMBOL_TYPE_IMPORT      = 'import'
-PIC_SYMBOL_TYPE_FUNC        = 'function'
-PIC_SYMBOL_TYPE_VAR         = 'var'
-
-## dataclasses
+class PicScannedSymbolType(Enum):
+    """ symbol type """
+    IMPORT  = 'import'
+    FUNC    = 'function'
+    VAR     = 'var'
 
 @dataclass
 class PicScannedSymbol():
     """ symbol information """
     lineno: int
     name:   str
-    type:   str
+    type:   PicScannedSymbolType
+
+class PicScannedImportType(Enum):
+    """ import type """
+    RAW         = 'raw'
+    FROM        = 'from'
+    FROM_INLINE = 'from-inline'
 
 @dataclass
 class PicScannedImport():
     """ import information """
     lineno:      int
     import_path: str
-    type:        str
+    type:        PicScannedImportType
 
     @property
     def name(self) -> str:

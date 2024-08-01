@@ -8,6 +8,7 @@ from pyimportcheck.core.scan._symbols import pic_scan_symbols
 from pyimportcheck.core.scan.types import (
     PicScannedSymbol,
     PicScannedFile,
+    PicScannedSymbolType,
 )
 
 
@@ -25,7 +26,15 @@ def __check_request(
     for assert_check in assert_table:
         assert assert_check['name'] in file_info.symbols
         print(file_info.symbols[assert_check['name']])
-        refimp = PicScannedSymbol(**assert_check)
+        refimp = PicScannedSymbol(
+            lineno  = assert_check['lineno'],
+            name    = assert_check['name'],
+            type    = getattr(
+                PicScannedSymbolType,
+                assert_check['type'].upper(),
+            )
+        )
+        print(refimp)
         assert file_info.symbols[assert_check['name']] == refimp
 
 #---
@@ -71,9 +80,9 @@ def test_scan_symbols_func() -> None:
     """ check function symbols
     """
     assert_table = (
-        {'lineno': 1, 'name': 'func_0', 'type': 'function'},
-        {'lineno': 3, 'name': 'func_1', 'type': 'function'},
-        {'lineno': 4, 'name': 'func_2', 'type': 'function'},
+        {'lineno': 1, 'name': 'func_0', 'type': 'func'},
+        {'lineno': 3, 'name': 'func_1', 'type': 'func'},
+        {'lineno': 4, 'name': 'func_2', 'type': 'func'},
     )
     file_info = PicScannedFile(
         path    = Path('aaaa'),

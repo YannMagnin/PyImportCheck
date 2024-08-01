@@ -3,7 +3,7 @@ pyimportcheck.core.scan._imports    - analyse import statement
 """
 __all__ = [
     'pic_scan_imports',
-    'pic_scan_symbol_add',
+    'pic_scan_import_add',
 ]
 from typing import Any
 import re
@@ -13,10 +13,8 @@ from pyimportcheck.core.scan._symbols import pic_scan_symbol_add
 from pyimportcheck.core.scan.types import (
     PicScannedFile,
     PicScannedImport,
-    PIC_IMPORT_TYPE_FROM_INLINE,
-    PIC_IMPORT_TYPE_FROM,
-    PIC_IMPORT_TYPE_RAW,
-    PIC_SYMBOL_TYPE_IMPORT,
+    PicScannedSymbolType,
+    PicScannedImportType,
 )
 
 #---
@@ -50,7 +48,7 @@ def _pic_scan_check_from_multiline(
             file_info   = file_info,
             lineno      = lineno,
             imppath     = imp['path'],
-            imptype     = PIC_IMPORT_TYPE_FROM,
+            imptype     = PicScannedImportType.FROM,
         )
         if imp['workaround']:
             lineno = lineno + 1
@@ -64,7 +62,7 @@ def _pic_scan_check_from_multiline(
                     file_info   = file_info,
                     lineno      = lineno,
                     symname     = sym,
-                    symtype     = PIC_SYMBOL_TYPE_IMPORT,
+                    symtype     = PicScannedSymbolType.IMPORT,
                 )
             lineno = lineno + 1
 
@@ -93,14 +91,14 @@ def _pic_scan_check_from_inline(
             file_info   = file_info,
             lineno      = lineno,
             imppath     = imp['path'],
-            imptype     = PIC_IMPORT_TYPE_FROM_INLINE,
+            imptype     = PicScannedImportType.FROM_INLINE,
         )
         for symbol in imp['sym'].split(','):
             pic_scan_symbol_add(
                 file_info   = file_info,
                 lineno      = lineno,
                 symname     = symbol.strip(),
-                symtype     = PIC_SYMBOL_TYPE_IMPORT,
+                symtype     = PicScannedSymbolType.IMPORT,
             )
 
 def _pic_scan_check_raw(
@@ -128,7 +126,7 @@ def _pic_scan_check_raw(
             file_info   = file_info,
             lineno      = stream[:imp.start()].count('\n'),
             imppath     = imp['path'],
-            imptype     = PIC_IMPORT_TYPE_RAW,
+            imptype     = PicScannedImportType.RAW,
         )
 
 #---
@@ -154,7 +152,7 @@ def pic_scan_import_add(
     file_info:  PicScannedFile,
     lineno:     int,
     imppath:    str,
-    imptype:    str,
+    imptype:    PicScannedImportType,
 ) -> None:
     """ add an new import information
     """

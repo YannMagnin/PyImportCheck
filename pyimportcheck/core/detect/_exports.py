@@ -10,6 +10,7 @@ from pyimportcheck.core.detect.types import PicDetectNotification
 from pyimportcheck.core.scan import (
     PicScannedModule,
     PicScannedFile,
+    PicScannedSymbolType,
 )
 
 #---
@@ -76,7 +77,7 @@ def _pic_check_mismatched_export(
                     type    = 'warning',
                     path    = info.path,
                     log     = \
-                        f"{info.path}:{exp.lineno}: exported symbol "
+                        f"{info.path}:{exp.lineno}: symbol "
                         f"'{exp.name}' should not be exported",
                 )
             )
@@ -92,6 +93,8 @@ def _pic_check_mismatched_export(
         )
     for expname, expcnt in expected_exports.items():
         if expcnt != 0:
+            continue
+        if info.symbols[expname].type == PicScannedSymbolType.IMPORT:
             continue
         notifications.append(
             PicDetectNotification(

@@ -10,6 +10,8 @@ from pyimportcheck.core.scan import (
     PicScannedSymbol,
     PicScannedImport,
     PicScannedExport,
+    PicScannedSymbolType,
+    PicScannedImportType,
 )
 
 #---
@@ -27,18 +29,46 @@ def test_scan_complet() -> None:
             '__init__': PicScannedFile(
                 path    = fakepkg_path/'__init__.py',
                 symbols = {
-                    '__all__' : PicScannedSymbol(4,  '__all__', 'var'),
-                    'a_test1' : PicScannedSymbol(10, 'a_test1', 'import'),
-                    'b_test1' : PicScannedSymbol(12, 'b_test1', 'import'),
-                    'b_test2' : PicScannedSymbol(12, 'b_test2', 'import'),
+                    '__all__' : \
+                        PicScannedSymbol(
+                            lineno  = 4,
+                            name    = '__all__',
+                            type    = PicScannedSymbolType.VAR,
+                        ),
+                    'a_test1' : \
+                        PicScannedSymbol(
+                            lineno  = 10,
+                            name    = 'a_test1',
+                            type    = PicScannedSymbolType.IMPORT,
+                        ),
+                    'b_test1' : \
+                        PicScannedSymbol(
+                            lineno  = 12,
+                            name    = 'b_test1',
+                            type    = PicScannedSymbolType.IMPORT,
+                        ),
+                    'b_test2' : \
+                        PicScannedSymbol(
+                            lineno  = 12,
+                            name    = 'b_test2',
+                            type    = PicScannedSymbolType.IMPORT,
+                        ),
                 },
                 exports = [
                     PicScannedExport(5, 'b_test2'),
                     PicScannedExport(6, 'b_test1'),
                 ],
                 imports = [
-                    PicScannedImport(10, 'fakepkg.a', 'from-inline'),
-                    PicScannedImport(12, 'fakepkg.b', 'from-inline'),
+                    PicScannedImport(
+                        lineno      = 10,
+                        import_path = 'fakepkg.a',
+                        type        = PicScannedImportType.FROM_INLINE,
+                    ),
+                    PicScannedImport(
+                        lineno      = 12,
+                        import_path = 'fakepkg.b',
+                        type        = PicScannedImportType.FROM_INLINE,
+                    ),
                 ],
             ),
             '__main__' : PicScannedFile(
@@ -50,23 +80,52 @@ def test_scan_complet() -> None:
             'a' : PicScannedFile(
                 path    = fakepkg_path/'a.py',
                 symbols = {
-                    '__all__': PicScannedSymbol(4,  '__all__', 'var'),
-                    'a_test1': PicScannedSymbol(20, 'a_test1', 'function'),
-                    'a_test2': PicScannedSymbol(25, 'a_test2', 'function'),
+                    '__all__': \
+                        PicScannedSymbol(
+                            lineno  = 4,
+                            name    = '__all__',
+                            type    = PicScannedSymbolType.VAR,
+                        ),
+                    'a_test1': \
+                        PicScannedSymbol(
+                            lineno  = 20,
+                            name    = 'a_test1',
+                            type    = PicScannedSymbolType.FUNC,
+                        ),
+                    'a_test2': \
+                        PicScannedSymbol(
+                            lineno  = 25,
+                            name    = 'a_test2',
+                            type    = PicScannedSymbolType.FUNC,
+                        ),
                 },
                 exports = [
                     PicScannedExport(5, 'a_test1'),
                     PicScannedExport(6, 'a_test2'),
                 ],
                 imports = [
-                    PicScannedImport(17, 'fakepkg', 'raw'),
+                    PicScannedImport(
+                        lineno      = 17,
+                        import_path = 'fakepkg',
+                        type        = PicScannedImportType.RAW,
+                    ),
                 ],
             ),
             'b' : PicScannedFile(
                 path    = fakepkg_path/'b.py',
                 symbols = {
-                    'b_test1': PicScannedSymbol(8,  'b_test1', 'function'),
-                    'b_test2': PicScannedSymbol(12, 'b_test2', 'function'),
+                    'b_test1': \
+                        PicScannedSymbol(
+                            lineno  = 8,
+                            name    = 'b_test1',
+                            type    = PicScannedSymbolType.FUNC,
+                        ),
+                    'b_test2': \
+                        PicScannedSymbol(
+                            lineno  = 12,
+                            name    = 'b_test2',
+                            type    = PicScannedSymbolType.FUNC,
+                        ),
                 },
                 exports = [],
                 imports = [],
@@ -83,12 +142,13 @@ def test_scan_complet() -> None:
             print(f"-- {attr}...")
             inp = getattr(outscan.modules[mod], attr)
             oup = getattr(assert_obj.modules[mod], attr)
-            print(inp)
-            print(oup)
+            print(f"inp ==> {inp}")
+            print(f"oup ==> {oup}")
             assert inp == oup
         print('-- full...')
         assert outscan.modules[mod] == assert_obj.modules[mod]
+        outscan.modules.pop(mod)
         print(' -== OK!')
     print('check all')
-    print(outscan)
-    assert outscan == assert_obj
+    print(f"outscan ==> {outscan.modules}")
+    assert len(outscan.modules) == 0
