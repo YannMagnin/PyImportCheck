@@ -5,7 +5,7 @@ __all__ = [
     'PicDetectReport',
     'PicDetectNotification',
 ]
-from typing import List, Dict
+from typing import List, Dict, Any
 from dataclasses import dataclass
 
 #---
@@ -40,3 +40,23 @@ class PicDetectReport():
     def warning(self) -> int:
         """ return the number of error in the notification list """
         return self.__count_notification_type('warning')
+
+    def export_json(self) -> Dict[str,Any]:
+        """ export to JSON
+        """
+        outinfo: Dict[str,Any] = {
+            'version': 1,
+            'total' : {
+                'all' : self.error + self.warning,
+                'error': self.error,
+                'warning': self.warning,
+            },
+            'notifications': [],
+        }
+        for notif_list in self.notifications.values():
+            for notif in notif_list:
+                outinfo['notifications'].append({
+                    'type': notif.type,
+                    'log': notif.log,
+                })
+        return outinfo

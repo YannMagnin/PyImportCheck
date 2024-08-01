@@ -61,7 +61,7 @@ def _pic_check_mismatched_export(
                     PicDetectNotification(
                         type    = 'warning',
                         log     = \
-                            f"{info.path}:{exp.lineno}: exported symbol "
+                            f"{info.path}:{exp.lineno}: symbol "
                             f"'{exp.name}' has already been exported, "
                             'you can remove this line',
                     ),
