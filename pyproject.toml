@@ -31,6 +31,7 @@ pytest-cov          = '*'
 
 [tool.pytest.ini_options]
 log_level = 'INFO'
+addopts = '--ignore=tests/_data'
 required_plugins = [
     'pytest-dependency',
     'pytest-cov',

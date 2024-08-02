@@ -14,7 +14,7 @@ from pyimportcheck.core.detect import PicDetectNotification
 _PREFIX_PKG = Path(f"{__file__}/../../_data/missing_export").resolve()
 _EXPORT_INFO = [
     PicDetectNotification(
-        type    = 'error',
+        type    = 'warning',
         path    = _PREFIX_PKG/'b.py',
         log     = f"{_PREFIX_PKG}/b.py: missing exported symbol 'b_func1'",
     ),

@@ -99,3 +99,27 @@ def test_scan_symbols_func() -> None:
             'def      func_2(  raaa, bbbb  )'
     )
     __check_request(file_info, assert_table)
+
+def test_scan_symbols_class() -> None:
+    """ check class symbols
+    """
+    assert_table = (
+        {'lineno': 1, 'name': 'Cls_0', 'type': 'class'},
+        {'lineno': 3, 'name': 'Cls_1', 'type': 'class'},
+        {'lineno': 4, 'name': 'Cls_2', 'type': 'class'},
+    )
+    file_info = PicScannedFile(
+        path    = Path('aaaa'),
+        symbols = {},
+        exports = [],
+        imports = [],
+    )
+    pic_scan_symbols(
+        file_info   = file_info,
+        stream      = \
+            'class Cls_0(object):\n'
+            '\n'
+            'class      Cls_1     (  Test  )\n'
+            'class      Cls_2(  raaa, bbbb  )'
+    )
+    __check_request(file_info, assert_table)

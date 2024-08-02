@@ -98,7 +98,7 @@ def _pic_check_mismatched_export(
             continue
         notifications.append(
             PicDetectNotification(
-                type    = 'error',
+                type    = 'warning',
                 path    = info.path,
                 log     = \
                     f"{info.path}: missing exported symbol '{expname}'"

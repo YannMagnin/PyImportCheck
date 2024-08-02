@@ -7,6 +7,7 @@ from __future__ import annotations
 
 __all__ = [
     'PicScannedFile',
+    'PicScannedModule',
     'PicScannedSymbol',
     'PicScannedImport',
     'PicScannedExport',
@@ -27,6 +28,7 @@ class PicScannedSymbolType(Enum):
     IMPORT  = 'import'
     FUNC    = 'function'
     VAR     = 'var'
+    CLASS   = 'class'
 
 @dataclass
 class PicScannedSymbol():

@@ -56,6 +56,21 @@ def _pic_scan_symbol_func(file_info: PicScannedFile, stream: Any) -> None:
             symtype     = PicScannedSymbolType.FUNC,
         )
 
+def _pic_scan_symbol_class(file_info: PicScannedFile, stream: Any) -> None:
+    """ analyse class symbol
+    """
+    matcher = re.compile(
+        flags   = re.MULTILINE,
+        pattern = r"^class( )+(?P<symbol>([a-zA-Z0-9_]+))( )*\(",
+    )
+    for sym in matcher.finditer(stream):
+        pic_scan_symbol_add(
+            file_info   = file_info,
+            lineno      = stream[:sym.start()].count('\n'),
+            symname     = sym['symbol'],
+            symtype     = PicScannedSymbolType.CLASS,
+        )
+
 #---
 # Public
 #---
@@ -68,6 +83,7 @@ def pic_scan_symbols(
     """
     _pic_scan_symbol_func(file_info, stream)
     _pic_scan_symbol_var(file_info, stream)
+    _pic_scan_symbol_class(file_info, stream)
 
 def pic_scan_symbol_add(
     file_info:  PicScannedFile,

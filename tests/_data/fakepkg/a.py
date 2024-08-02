@@ -2,7 +2,7 @@
 a   - A test
 """
 __all__ = [
-    'a_test1',
+    'ACls',
     'a_test2',
 ]
 
@@ -16,8 +16,8 @@ print('-== FROM TEST IMPORT B_TEST1')
 #from test import b_test1
 import fakepkg
 
-print('before a_test1')
-def a_test1() -> None:
+print('before ACls')
+class ACls():
     """ osef """
     fakepkg.b_test1()
 
