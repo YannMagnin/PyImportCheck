@@ -125,16 +125,10 @@ def _pic_search_circular_import(
         will be returned, otherwise an explicit `None` will be returned
         instead
     """
-    if not import_history_list:
-        print(f"-== LOOKING FOR {current_import_info.import_path} ==-")
     if import_history_list:
         import_history_list[-1][1] = current_import_info.lineno
     for import_info in import_history_list[:-1]:
         if import_info[0] == current_import_info.import_path:
-            print(
-                f"> found '{import_info[0]}' in "
-                f"{current_import_info.import_path}"
-            )
             import_history_list.append(
                 [current_import_info.import_path, -1],
             )
@@ -144,13 +138,7 @@ def _pic_search_circular_import(
         target_import_path      = current_import_info.import_path,
         target_import_lineno    = current_import_info.lineno,
     )
-    print(
-        f"^ translation into -> {current_import_info.import_path} -> "
-        f"{target.debug_show()}"
-    )
-    print(f"% target imports -> {target.imports}")
     for next_import in target.imports:
-        print(f"{current_import_info.import_path} --> {next_import}")
         valid = _pic_search_circular_import(
             root_module_info    = root_module_info,
             current_import_info = next_import,
@@ -175,7 +163,6 @@ def _pic_check_file(
     )
     notifications: List[PicDetectNotification] = []
     for imp in current_file_info.imports:
-        print(f"*** looking import -> '{imp.import_path}'")
         try:
             circular_import_list = _pic_search_circular_import(
                 root_module_info    = root_module_info,
@@ -218,7 +205,6 @@ def _pic_check_module(
                 import_prefix       = f"{import_prefix}.{module}",
             )
             continue
-        print(f"---- {module_info.path}")
         notifications += _pic_check_file(
             root_module_info    = root_module_info,
             current_file_info   = module_info,
@@ -235,11 +221,9 @@ def pic_detect_circular_import(
 ) -> List[PicDetectNotification]:
     """ try to detect circular import
     """
-    print(root_module_info.debug_show())
     notification_list = _pic_check_module(
         root_module_info,
         root_module_info,
         root_module_info.name,
     )
-    print(notification_list)
     return notification_list
