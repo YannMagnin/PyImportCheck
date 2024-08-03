@@ -15,11 +15,27 @@ _PREFIX_PKG = Path(f"{__file__}/../../_data/fakepkg").resolve()
 _SCANINFO = [
     PicDetectNotification(
         type    = 'error',
+        path    = Path('fakepkg/a.py'),
+        log     = \
+            '(fakepkg/a.py) '
+            'fakepkg.a:17 -> fakepkg.__init__:10 -> fakepkg.a:17 '
+            '-> ...',
+    ),
+    PicDetectNotification(
+        type    = 'error',
         path    = Path('fakepkg/__init__.py'),
         log     = \
             '(fakepkg/__init__.py) '
-            'fakepkg.__init__:10 -> fakepkg.a:17 -> ...',
-        ),
+            'fakepkg.__init__:10 -> fakepkg.a:17 -> fakepkg.__init__:10 -> '
+            'fakepkg.a:17 -> ...',
+    ),
+    PicDetectNotification(
+        type    = 'error',
+        path    = Path('fakepkg/test/__init__.py'),
+        log     = \
+            '(fakepkg/test/__init__.py) fakepkg.test.__init__:8 -> '
+            'fakepkg.a:17 -> fakepkg.__init__:10 -> fakepkg.a:17 -> ...',
+    ),
 ]
 
 #---
@@ -31,10 +47,11 @@ def test_detec_circular() -> None:
     """
     scaninfo = pic_scan_package(_PREFIX_PKG)
     detectinfo = pic_detect_circular_import(scaninfo)
-    print(detectinfo)
     print('-== check each notification ==-')
+    for notif in detectinfo:
+        print(notif.debug_show())
     for notif in _SCANINFO:
-        print(f"looking for ==> {notif}")
+        print(f"looking for ==> {notif.debug_show()}")
         assert notif in detectinfo
         detectinfo.remove(notif)
     print("-== check remaining notifications ==-")
