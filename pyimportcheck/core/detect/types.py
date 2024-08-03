@@ -9,19 +9,21 @@ from typing import List, Dict, Any
 from dataclasses import dataclass
 from pathlib import Path
 
+from pyimportcheck.core._utils import PicDebugClass
+
 #---
 # Public
 #---
 
 @dataclass
-class PicDetectNotification():
+class PicDetectNotification(PicDebugClass):
     """ warning / error information """
     type:   str
     path:   Path
     log:    str
 
 @dataclass
-class PicDetectReport():
+class PicDetectReport(PicDebugClass):
     """ repport of all detected information """
     notifications:   Dict[str,List[PicDetectNotification]]
 

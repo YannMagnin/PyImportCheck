@@ -19,6 +19,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from enum import Enum
 
+from pyimportcheck.core._utils import PicDebugClass
+
 #---
 # Public
 #---
@@ -31,7 +33,7 @@ class PicScannedSymbolType(Enum):
     CLASS   = 'class'
 
 @dataclass
-class PicScannedSymbol():
+class PicScannedSymbol(PicDebugClass):
     """ symbol information """
     lineno: int
     name:   str
@@ -44,7 +46,7 @@ class PicScannedImportType(Enum):
     FROM_INLINE = 'from-inline'
 
 @dataclass
-class PicScannedImport():
+class PicScannedImport(PicDebugClass):
     """ import information """
     lineno:      int
     import_path: str
@@ -56,13 +58,13 @@ class PicScannedImport():
         return self.import_path.rsplit('.', maxsplit=1)[-1]
 
 @dataclass
-class PicScannedExport():
+class PicScannedExport(PicDebugClass):
     """ scanned export symbol information """
     lineno: int
     name:   str
 
 @dataclass
-class PicScannedFile():
+class PicScannedFile(PicDebugClass):
     """ scanned python file information """
     path:       Path
     symbols:    Dict[str,PicScannedSymbol]
@@ -75,7 +77,7 @@ class PicScannedFile():
         return self.path.stem
 
 @dataclass
-class PicScannedModule():
+class PicScannedModule(PicDebugClass):
     """ scanned module information """
     name:       str
     path:       Path
