@@ -15,14 +15,15 @@ _PREFIX_PKG = Path(f"{__file__}/../../_data/missing_export").resolve()
 _EXPORT_INFO = [
     PicDetectNotification(
         type    = 'warning',
-        path    = _PREFIX_PKG/'b.py',
-        log     = f"{_PREFIX_PKG}/b.py: missing exported symbol 'b_func1'",
+        path    = Path('missing_export/b.py'),
+        log     = \
+            'missing_export/b.py: missing exported symbol \'b_func1\'',
     ),
     PicDetectNotification(
         type    = 'warning',
-        path    = _PREFIX_PKG/'a.py',
+        path    = Path('missing_export/a.py'),
         log     = \
-            f"{_PREFIX_PKG}/a.py: missing `__all__` "
+            'missing_export/a.py: missing `__all__` '
             'symbol, which can be declared as follow:\n'
             '>>> __all__ = [\n'
             '>>>     \'a_func0\',\n'
@@ -32,23 +33,23 @@ _EXPORT_INFO = [
     ),
     PicDetectNotification(
         type    = 'warning',
-        path    = _PREFIX_PKG/'c.py',
+        path    = Path('missing_export/c.py'),
         log     = \
-            f"{_PREFIX_PKG}/c.py:7: symbol 'c_func0' has "
+            'missing_export/c.py:7: symbol \'c_func0\' has '
             'already been exported, you can remove this line',
     ),
     PicDetectNotification(
         type    = 'warning',
-        path    = _PREFIX_PKG/'c.py',
+        path    = Path('missing_export/c.py'),
         log     = \
-            f"{_PREFIX_PKG}/c.py:8: symbol 'c_func1' has "
+            'missing_export/c.py:8: symbol \'c_func1\' has '
             'already been exported, you can remove this line',
     ),
     PicDetectNotification(
         type    = 'warning',
-        path    = _PREFIX_PKG / '__main__.py',
+        path    = Path('missing_export/__main__.py'),
         log     = \
-            f"{_PREFIX_PKG}/__main__.py: this magic file should "
+            'missing_export/__main__.py: this magic file should '
             'not export symbols'
     ),
 ]
@@ -62,10 +63,13 @@ def test_missing() -> None:
     """
     scaninfo = pic_scan_package(_PREFIX_PKG)
     detectinfo = pic_detect_exports_mistake(scaninfo)
-    print(detectinfo)
+    print('-== check each notification ==-')
+    for notif in detectinfo:
+        print(notif.debug_show())
+    print('-== check notifications ==-')
     expect_list = _EXPORT_INFO.copy()
     for check in _EXPORT_INFO:
-        print(check)
+        print(f"looking for ==> {check.debug_show()}")
         assert check in detectinfo
         expect_list.remove(check)
         detectinfo.remove(check)

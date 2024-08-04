@@ -71,7 +71,7 @@ def pyimportcheck_cli_entry(
     if not json_output_only:
         ret = pic_output_stdout(report)
     if json_output:
-        ret = pic_output_json(report, json_output)
+        ret = pic_output_json(json_output, report)
     if json_output_only:
-        ret = pic_output_json(report, json_output_only)
+        ret = pic_output_json(json_output_only, report)
     sys.exit(ret)

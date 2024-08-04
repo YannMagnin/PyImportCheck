@@ -14,8 +14,8 @@ from pyimportcheck.core.detect import PicDetectReport
 #---
 
 def pic_output_json(
-    report:     PicDetectReport,
     pathname:   Path,
+    report:     PicDetectReport,
 ) -> int:
     """ export report in a JSON file
     """
