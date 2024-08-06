@@ -1,5 +1,5 @@
 """
-pyimportcheck.core.scan   - python package scanner
+pyimportcheck.core.scan   - static code scanner
 """
 __all__ = [
     'pic_scan_package',
@@ -40,7 +40,7 @@ def _pic_analyse_file(
     filepath:   Path,
     package:    str
 ) -> PicScannedFile:
-    """ load the file and manually parse import
+    """ load the file and manually parse it
     """
     fileinfo = PicScannedFile(
         path    = filepath,

@@ -1,5 +1,5 @@
 """
-pyimportcheck.core.scan._imports    - analyse import statement
+pyimportcheck.core.scan._imports    - analyse import statements
 """
 __all__ = [
     'pic_scan_imports',
@@ -26,11 +26,11 @@ def _pic_scan_check_from_multiline(
     stream: Any,
     package: str,
 ) -> None:
-    """ check multilined `from` import
+    """ check multilined `from` imports
 
     @notes
     - check only `from <package> import (<symbols>, ...)`
-    - register import information
+    - register imports information
     - register implicit symbols information
     """
     matcher = re.compile(
@@ -75,7 +75,7 @@ def _pic_scan_check_from_inline(
 
     @notes
     - check only `from <package> import <symbols>`
-    - register import information
+    - register imports information
     - register implicit symbols information
     """
     matcher = re.compile(
@@ -106,11 +106,11 @@ def _pic_scan_check_raw(
     stream: Any,
     package: str,
 ) -> None:
-    """ check raw import statement
+    """ check raw import statements
 
     @notes
     - check only `import <package statement>`
-    - register import information
+    - register imports information
     - display warning
     """
     matcher = re.compile(
@@ -141,8 +141,8 @@ def pic_scan_imports(
     """ analyse import statements
 
     @notes
-    - check for raw import (`import <package>`)
-    - analyse fragmented import (`from <package> import ...`)
+    - check for raw imports (`import <package>`)
+    - analyse fragmented imports (`from <package> import ...`)
     """
     _pic_scan_check_raw(file_info, stream, package)
     _pic_scan_check_from_inline(file_info, stream, package)
@@ -154,7 +154,7 @@ def pic_scan_import_add(
     imppath:    str,
     imptype:    PicScannedImportType,
 ) -> None:
-    """ add an new import information
+    """ add new import information
     """
     file_info.imports.append(
         PicScannedImport(

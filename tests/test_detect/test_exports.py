@@ -23,8 +23,8 @@ _EXPORT_INFO = [
         type    = 'warning',
         path    = Path('missing_export/a.py'),
         log     = \
-            'missing_export/a.py: missing `__all__` '
-            'symbol, which can be declared as follow:\n'
+            'missing_export/a.py: missing the `__all__` '
+            'symbol, which can be declared as follows:\n'
             '>>> __all__ = [\n'
             '>>>     \'a_func0\',\n'
             '>>>     \'a_func1\',\n'
@@ -49,8 +49,8 @@ _EXPORT_INFO = [
         type    = 'warning',
         path    = Path('missing_export/__main__.py'),
         log     = \
-            'missing_export/__main__.py: this magic file should '
-            'not export symbols'
+            'missing_export/__main__.py:4: You can remove the `__all__` '
+            'declaration since this magic file should not export symbols',
     ),
 ]
 

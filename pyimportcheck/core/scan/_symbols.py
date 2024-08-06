@@ -1,5 +1,5 @@
 """
-pyimportcheck.core.scan._symbols    - analyse symbols declaration
+pyimportcheck.core.scan._symbols    - analyse symbol declarations
 """
 __all__ = [
     'pic_scan_symbols',
@@ -23,7 +23,7 @@ from pyimportcheck.core.scan.types import (
 #---
 
 def _pic_scan_symbol_var(file_info: PicScannedFile, stream: Any) -> None:
-    """ analyse function symbol
+    """ analyse variable symbols
     """
     matcher = re.compile(
         flags   = re.MULTILINE,
@@ -42,7 +42,7 @@ def _pic_scan_symbol_var(file_info: PicScannedFile, stream: Any) -> None:
             )
 
 def _pic_scan_symbol_func(file_info: PicScannedFile, stream: Any) -> None:
-    """ analyse function symbol
+    """ analyse function symbols
     """
     matcher = re.compile(
         flags   = re.MULTILINE,
@@ -57,7 +57,7 @@ def _pic_scan_symbol_func(file_info: PicScannedFile, stream: Any) -> None:
         )
 
 def _pic_scan_symbol_class(file_info: PicScannedFile, stream: Any) -> None:
-    """ analyse class symbol
+    """ analyse class symbols
     """
     matcher = re.compile(
         flags   = re.MULTILINE,
@@ -79,7 +79,7 @@ def pic_scan_symbols(
     file_info:  PicScannedFile,
     stream: Any,
 ) -> None:
-    """ analyse symbol declaration
+    """ analyse symbol declarations
     """
     _pic_scan_symbol_func(file_info, stream)
     _pic_scan_symbol_var(file_info, stream)
@@ -91,7 +91,7 @@ def pic_scan_symbol_add(
     symname:    str,
     symtype:    PicScannedSymbolType,
 ) -> None:
-    """ add a symbol information into the internal dictionary
+    """ add symbol information into the internal dictionary
     """
     if symname == '*':
         log_warning(
@@ -101,7 +101,7 @@ def pic_scan_symbol_add(
     if symname in file_info.symbols:
         log_error(
             f"{file_info.path}:{lineno + 1}: symbol '{symname}' already "
-            'exists,  the symbol will be ignored'
+            'exists, the symbol will be ignored'
         )
         return
     file_info.symbols[symname] = PicScannedSymbol(

@@ -25,7 +25,7 @@ def pic_scan_exports(
 
     @notes
     - fetch all exposed symbols
-    - notify warning if it use "(" instead of "]"
+    - generate warning if it uses "(" instead of "["
     """
     matcher = re.compile(
         flags   = re.MULTILINE,

@@ -1,3 +1,3 @@
 """
-pyimportcheck.core    - pycycle core
+pyimportcheck.core    - pyimportcheck core
 """

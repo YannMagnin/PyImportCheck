@@ -1,8 +1,8 @@
 """
 pyimportcheck.core.scan.types   - glossary of all scanner types
 """
-# use this magical import to allow the use of partialed initialized classes
-# needed by the `PicScannedModule` which can store other module information
+# use this magical import to enable partially initialised classes needed by
+# the `PicScannedModule` which can store other modules' information
 from __future__ import annotations
 
 __all__ = [
@@ -73,7 +73,7 @@ class PicScannedFile(PicDebugClass):
 
     @property
     def name(self) -> str:
-        """ shortcut to fetch the import name """
+        """ shortcut to fetch the package name """
         return self.path.stem
 
 @dataclass

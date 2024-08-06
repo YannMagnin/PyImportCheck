@@ -1,5 +1,5 @@
 """
-pyimportcheck.core.logger - PycycleLogger object abstraction
+pyimportcheck.core.logger - Logger primitives
 """
 __all__ = [
     'log_error',

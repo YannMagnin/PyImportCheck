@@ -50,8 +50,8 @@ _JSON_OUT: Dict[str,Any] = {
             'type': 'warning',
             'path': 'fakepkg/b.py',
             'log': \
-                'fakepkg/b.py: missing `__all__` symbol, which can be '
-                'declared as follow:\n'
+                'fakepkg/b.py: missing the `__all__` symbol, which can be '
+                'declared as follows:\n'
                 '>>> __all__ = [\n'
                 '>>>     \'b_test1\',\n'
                 '>>>     \'b_test2\',\n'

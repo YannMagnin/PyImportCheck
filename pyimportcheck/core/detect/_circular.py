@@ -27,9 +27,9 @@ def _pic_generate_notification(
     """ generate the notification
 
     @notes
-    - since all import lineno refer to its parent import lineno, we need to
-        perform a wierd iteration in the circular import list to properly
-        generate correct information
+    - since all imports `lineno` refer to corresponding parent imports,
+        we need to perform a weird iteration on the circular import list
+        to properly generate correct information
     """
     last_import_path = circular_import_list[-1][0]
     error  = f"({str(origin_pathfile)}) "
@@ -75,8 +75,8 @@ def _pic_find_fileinfo(
 
     @notes
     - if the last part of the `current_import_info.import_path` is a module
-        then it will automatically try to find the `__init__.py` file that
-        refer the module
+        then it will automatically try to find the associated `__init__.py`
+        file
     """
     target: Union[PicScannedModule,PicScannedFile] = root_module_info
     for shard in target_import_path.split('.')[1:]:
@@ -86,7 +86,7 @@ def _pic_find_fileinfo(
                 import_path     = target_import_path,
                 import_lineno   = target_import_lineno,
                 log             = \
-                    f"because '{target.name}' is a file, or it should be "
+                    f"because '{target.name}' is a file, but it should be "
                     'a module',
             )
         if shard not in target.modules:
@@ -106,8 +106,9 @@ def _pic_find_fileinfo(
                 import_lineno   = target_import_lineno,
                 log             = \
                     'unable to find the \'__init__.py\' file information '
-                    'required to analyse the module (this mean that all '
-                    'files inside this module will be skipped)',
+                    'required to analyse the module (note that all files '
+                    'inside this module will be skipped until the file is'
+                    'added)',
             )
         target = target.modules['__init__']
     assert isinstance(target, PicScannedFile)
@@ -121,9 +122,8 @@ def _pic_search_circular_import(
     """ resolve a package and avoid circular import
 
     @notes
-    - if a circular dependency has been detected the the import history
-        will be returned, otherwise an explicit `None` will be returned
-        instead
+    - if a circular dependency has been detected, the import history
+        will be returned, otherwise an empty list will be returned instead
     """
     if import_history_list:
         import_history_list[-1][1] = current_import_info.lineno

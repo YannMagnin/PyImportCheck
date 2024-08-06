@@ -25,7 +25,7 @@ from pyimportcheck.core._logger import (
 #---
 
 def pic_detect_all(info: PicScannedModule) -> PicDetectReport:
-    """ run all detector
+    """ run all detectors
     """
     report = PicDetectReport(notifications={})
     mapping = {

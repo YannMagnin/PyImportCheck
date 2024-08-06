@@ -1,5 +1,5 @@
 """
-pyimportcheck.core.exception  - generic pycycle exception class
+pyimportcheck.core.exception  - generic pyimportcheck exception class
 """
 __all__ = [
     'PicException',
@@ -10,4 +10,4 @@ __all__ = [
 #---
 
 class PicException(Exception):
-    """ generic pycycle exception """
+    """ generic pyimportcheck exception """

@@ -26,7 +26,8 @@ def pic_output_stdout(report: PicDetectReport) -> int:
             log(notif.log)
     if report.error > 0 or report.warning > 0:
         log_info('==========================')
-        log_error(
-            f"Detected {report.error} error and {report.warning} warning"
-        )
+        error = 'error' if report.error == 1 else 'errors'
+        warning = 'warning' if report.warning == 1 else 'warnings'
+        log_error(f"Detected {report.error} {error}")
+        log_warning(f"Detected {report.warning} {warning}")
     return report.error + report.warning

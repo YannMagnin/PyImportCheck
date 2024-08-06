@@ -1,5 +1,5 @@
 """
-pyimportcheck.core.detect.types - all exposed types unsed by the detector
+pyimportcheck.core.detect.types - all exposed types used by the detector
 """
 __all__ = [
     'PicDetectReport',
@@ -24,11 +24,12 @@ class PicDetectNotification(PicDebugClass):
 
 @dataclass
 class PicDetectReport(PicDebugClass):
-    """ repport of all detected information """
+    """ report of all detected information
+    """
     notifications:   Dict[str,List[PicDetectNotification]]
 
     def __count_notification_type(self, notif_type: str) -> int:
-        """ count the number of `notif_type` type
+        """ count the number of `notif_type` notifications
         """
         counter = 0
         for notifs in self.notifications.values():
@@ -37,12 +38,12 @@ class PicDetectReport(PicDebugClass):
 
     @property
     def error(self) -> int:
-        """ return the number of error in the notification list """
+        """ return the number of errors in the notification list """
         return self.__count_notification_type('error')
 
     @property
     def warning(self) -> int:
-        """ return the number of error in the notification list """
+        """ return the number of warnings in the notification list """
         return self.__count_notification_type('warning')
 
     def export_json(self) -> Dict[str,Any]:

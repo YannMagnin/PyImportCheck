@@ -17,7 +17,7 @@ def pic_output_json(
     pathname:   Path,
     report:     PicDetectReport,
 ) -> int:
-    """ export report in a JSON file
+    """ export the report in a JSON file
     """
     if pathname.exists():
         pathname.unlink()

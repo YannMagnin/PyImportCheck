@@ -43,8 +43,8 @@ def _pic_check_missing_export(
     if '__all__' not in info.symbols:
         if not info.symbols:
             return []
-        log  = ' missing `__all__` symbol, which can be declared as '
-        log += 'follow:\n'
+        log  = ' missing the `__all__` symbol, which can be declared as '
+        log += 'follows:\n'
         log += '>>> __all__ = [\n'
         for sym in info.symbols.keys():
             if not sym.startswith('_'):
@@ -67,9 +67,9 @@ def _pic_check_mismatched_export(
     """ check mismatched `__all__` declaration
 
     @notes
-    - check that no private symbols has been exported
-    - check if a symbols has been exported multiple time
-    - check that exported symbols exists
+    - check that no private symbols have been exported
+    - check if one symbol has been exported multiple times
+    - check that exported symbols exist
     """
     notifications = []
     expected_exports: Dict[str,Any] = {}
@@ -110,8 +110,8 @@ def _pic_check_mismatched_export(
                 root        = root,
                 info        = info,
                 log         = \
-                    f"{exp.lineno}: exported symbol '{exp.name}' doest "
-                    'not exists',
+                    f"{exp.lineno}: exported symbol '{exp.name}' does "
+                    'not exist',
             ),
         )
     for expname, expcnt in expected_exports.items():
@@ -136,7 +136,7 @@ def _pic_check_export_validity(
     """ check `__all__` declaration
 
     @notes
-    - special check performed on __main__.py file which do not have a
+    - special check performed on `__main__.py` file which should not have an
         `__all__` declaration
     """
     if info.path.name == '__main__.py':
@@ -148,7 +148,9 @@ def _pic_check_export_validity(
                     root        = root,
                     info        = info,
                     log         = \
-                        ' this magic file should not export symbols',
+                        f"{info.symbols['__all__'].lineno}: "
+                        'You can remove the `__all__` declaration since '
+                        'this magic file should not export symbols',
                 ),
             )
             notifications += _pic_check_mismatched_export(root, info)

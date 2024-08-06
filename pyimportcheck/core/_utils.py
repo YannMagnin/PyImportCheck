@@ -10,7 +10,7 @@ from typing import Any
 # Public
 #---
 
-# allow too fiew public methods and too many return statements
+# allow "too few public methods" and "too many return statements"
 # pylint: disable=locally-disabled,R0903,R0911
 
 class PicDebugClass():
