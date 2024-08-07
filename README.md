@@ -1,7 +1,7 @@
 # PyImportCheck
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/63974594-cd63-496a-b260-bc208553573d">
+  <img src="https://github.com/user-attachments/assets/b245ace4-40a1-4372-99f2-77fdea12d6f6">
 </p>
 
 Pyimportcheck is

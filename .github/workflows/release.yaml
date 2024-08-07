@@ -1,0 +1,69 @@
+name: Test, Build and Release
+on: [push]
+
+jobs:
+  release_moi:
+    name: 'Generate the release'
+    if: ${{ startsWith(github.event.head_commit.message, 'release v') }}
+    permissions: write-all
+    runs-on: ubuntu-latest
+
+    steps:
+      # setup build environment
+      - name: 'checkout the codebase'
+        uses: actions/checkout@v4
+      - name: 'install CPython 3.8'
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.8'
+      - name: 'install poetry'
+        uses: abatilo/actions-poetry@v3
+        with:
+          poetry-version: '1.8'
+      - name: 'Setup a local virtual environment'
+        run: |
+          poetry config virtualenvs.create true --local
+          poetry config virtualenvs.in-project true --local
+      - name: 'define a cache for the virtual environment'
+        uses: actions/cache@v4
+        with:
+          path: ./.venv
+          key: venv-${{ hashFiles('poetry.lock') }}
+      - name: 'install the project dependencies'
+        run: |
+          poetry install
+
+      # check the codebase
+      - name: 'check codebase'
+        run: |
+          poetry run pylint -d R0903,R0801 ./PyImportCheck/pyimportcheck
+          poetry run mypy --strict ./PyImportCheck/pyimportcheck
+          poetry run pytest
+
+      # build the project
+      - name: 'build the project'
+        run: |
+          poetry build
+
+      # generate / fetch needed information
+      - name: 'fetch project information'
+        run: |
+          version=$(echo ${{ github.event.head_commit.message }})
+          version=$(echo $version | grep -oP 'v[0-9]+.[0-9]+.[0-9]+$')
+          echo "version=${version}" >> $GITHUB_ENV
+          echo "date_test=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
+          python ./PyImportCheck/scripts/generate_release_notes.py \
+            $version \
+            ./PyImportCheck/scripts/release.md
+
+      # create the release
+      - name: 'Create the release'
+        uses: 'softprops/action-gh-release@v2'
+        with:
+          name: '${{ env.version }} (${{ env.date_test }})'
+          tag_name: ${{ env.version }}
+          body_path: './PyImportCheck/scripts/release.md'
+          files: |
+            dist/pyimportcheck-*.whl
+            dist/pyimportcheck-*.tar.gz
+          make_latest: true

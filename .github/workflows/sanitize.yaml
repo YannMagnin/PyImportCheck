@@ -3,6 +3,7 @@ on: [push]
 jobs:
   sanitize-codebase:
     runs-on: ubuntu-latest
+    if: ${{ !startsWith(github.event.head_commit.message, 'release v') }}
     steps:
       - name: 'checkout the codebase'
         uses: actions/checkout@v4
@@ -26,9 +27,8 @@ jobs:
       - name: 'install the project dependencies'
         run: |
           poetry install
-          poetry run pip install pytest
       - name: 'check codebase'
         run: |
-          poetry run pylint -d R0903,R0801 pyimportcheck
-          poetry run mypy --strict pyimportcheck
+          poetry run pylint -d R0903,R0801 ./PyImportCheck/pyimportcheck
+          poetry run mypy --strict ./PyImportCheck/pyimportcheck
           poetry run pytest

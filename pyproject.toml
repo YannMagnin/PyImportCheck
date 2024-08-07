@@ -1,13 +1,13 @@
 [tool.poetry]
 name        = 'pyimportcheck'
-version     = '0.0.4'
+version     = '0.1.0'
 description = 'Python import checker'
 readme      = 'README.md'
 authors     = [
     'Yann MAGNIN <yann.magnin@protonmail.com>',
 ]
 packages    = [
-    { include = 'pyimportcheck' },
+    { from = 'PyImportCheck', include = 'pyimportcheck' },
 ]
 
 
@@ -31,7 +31,7 @@ pytest-cov          = '*'
 
 [tool.pytest.ini_options]
 log_level = 'INFO'
-addopts = '--ignore=tests/_data'
+addopts = '--ignore=PyImportCheck/tests/_data'
 required_plugins = [
     'pytest-dependency',
     'pytest-cov',
@@ -41,5 +41,5 @@ python_functions = [
 ]
 python_files = '*.py'
 testpaths = [
-    'tests',
+    'PyImportCheck/tests',
 ]
