@@ -119,7 +119,7 @@ def _pic_scan_check_raw(
     )
     for imp in matcher.finditer(stream):
         log_warning(
-            f"{file_info.path}:{imp.start()}: avoid using raw "
+            f"{file_info.relpath}:{imp.start()}: avoid using raw "
             '`import`, prefer using `from ... import ...` instead'
         )
         pic_scan_import_add(

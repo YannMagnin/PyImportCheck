@@ -32,6 +32,7 @@ def test_scan_exports() -> None:
     )
     file_info = PicScannedFile(
         path    = Path('aaaa'),
+        relpath = Path('aaaa'),
         symbols = {},
         exports = [],
         imports = [],

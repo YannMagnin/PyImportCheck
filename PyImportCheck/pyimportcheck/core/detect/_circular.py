@@ -5,7 +5,6 @@ __all__ = [
     'pic_detect_circular_import',
 ]
 from typing import List, Union, cast
-from pathlib import Path
 
 from pyimportcheck.core.exception import PicException
 from pyimportcheck.core.detect.types import PicDetectNotification
@@ -21,7 +20,7 @@ from pyimportcheck.core.scan import (
 
 def _pic_generate_notification(
     root_module_info:       PicScannedModule,
-    origin_pathfile:        Path,
+    target_file_info:       PicScannedFile,
     circular_import_list:   List[List[Union[str,int]]],
 ) -> PicDetectNotification:
     """ generate the notification
@@ -32,7 +31,7 @@ def _pic_generate_notification(
         to properly generate correct information
     """
     last_import_path = circular_import_list[-1][0]
-    error  = f"({str(origin_pathfile)}) "
+    error  = f"({str(target_file_info.relpath)}) "
     for circular_imp in circular_import_list:
         import_path = cast(str, circular_imp[0])
         impinfo = _pic_find_fileinfo(
@@ -49,7 +48,7 @@ def _pic_generate_notification(
     error += '...'
     return PicDetectNotification(
         type    = 'error',
-        path    = origin_pathfile,
+        path    = target_file_info.path,
         log     = error,
     )
 
@@ -62,7 +61,7 @@ def _pic_generate_raise_log(
     """ generate exception information
     """
     return PicException(
-        f"{module_info.path}:{import_lineno}: unable to import "
+        f"{module_info.relpath}:{import_lineno}: unable to import "
         f"'{import_path}', {log}",
     )
 
@@ -158,9 +157,6 @@ def _pic_check_file(
 ) -> List[PicDetectNotification]:
     """ analyse file (check circular import)
     """
-    pathfile = current_file_info.path.resolve().relative_to(
-        (root_module_info.path/'..').resolve(),
-    )
     notifications: List[PicDetectNotification] = []
     for imp in current_file_info.imports:
         try:
@@ -173,7 +169,7 @@ def _pic_check_file(
             notifications.append(
                 PicDetectNotification(
                     type    = 'error',
-                    path    = pathfile,
+                    path    = current_file_info.path,
                     log     = str(err),
                 ),
             )
@@ -183,7 +179,7 @@ def _pic_check_file(
         notifications.append(
             _pic_generate_notification(
                 root_module_info     = root_module_info,
-                origin_pathfile      = pathfile,
+                target_file_info     = current_file_info,
                 circular_import_list = circular_import_list,
             ),
         )
@@ -217,13 +213,14 @@ def _pic_check_module(
 #---
 
 def pic_detect_circular_import(
-    root_module_info: PicScannedModule,
+    root_module_info: Union[PicScannedModule,PicScannedFile],
 ) -> List[PicDetectNotification]:
     """ try to detect circular import
     """
-    notification_list = _pic_check_module(
+    if isinstance(root_module_info, PicScannedFile):
+        return []
+    return _pic_check_module(
         root_module_info,
         root_module_info,
         root_module_info.name,
     )
-    return notification_list

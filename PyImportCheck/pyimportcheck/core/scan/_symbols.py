@@ -95,12 +95,12 @@ def pic_scan_symbol_add(
     """
     if symname == '*':
         log_warning(
-            f"{file_info.path}:{lineno}: avoid using '*' import"
+            f"{file_info.relpath}:{lineno}: avoid using '*' import"
         )
         return
     if symname in file_info.symbols:
         log_error(
-            f"{file_info.path}:{lineno + 1}: symbol '{symname}' already "
+            f"{file_info.relpath}:{lineno + 1}: symbol '{symname}' already "
             'exists, the symbol will be ignored'
         )
         return

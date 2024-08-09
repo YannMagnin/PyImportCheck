@@ -15,12 +15,12 @@ _PREFIX_PKG = Path(f"{__file__}/../../_data/brokenpkg").resolve()
 _SCANINFO   = [
     PicDetectNotification(
         type    = 'error',
-        path    = Path('brokenpkg'),
+        path    = _PREFIX_PKG,
         log     = 'brokenpkg: missing critical `__init__.py` file',
     ),
     PicDetectNotification(
         type        = 'error',
-        path        = Path('brokenpkg/prout'),
+        path        = _PREFIX_PKG/'prout',
         log         = \
             'brokenpkg/prout: missing critical `__init__.py` file',
     ),

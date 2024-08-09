@@ -11,6 +11,7 @@ __all__ = [
     'PicScannedSymbolType',
     'PicScannedImportType',
 ]
+from typing import Union
 from dataclasses import dataclass
 from pathlib import Path
 import re
@@ -37,18 +38,12 @@ from pyimportcheck.core._logger import (
 #---
 
 def _pic_analyse_file(
-    filepath:   Path,
+    fileinfo:   PicScannedFile,
     package:    str
 ) -> PicScannedFile:
     """ load the file and manually parse it
     """
-    fileinfo = PicScannedFile(
-        path    = filepath,
-        symbols = {},
-        exports = [],
-        imports = [],
-    )
-    with open(filepath, 'r', encoding='utf-8') as filestream:
+    with open(fileinfo.path, 'r', encoding='utf-8') as filestream:
         mfile = filestream.read()
         pic_scan_imports(fileinfo, mfile, package)
         pic_scan_symbols(fileinfo, mfile)
@@ -56,8 +51,9 @@ def _pic_analyse_file(
     return fileinfo
 
 def _pic_analyse_package(
-    module:     PicScannedModule,
-    package:    str,
+    module:      PicScannedModule,
+    package:     str,
+    base_prefix: Path
 ) -> PicScannedModule:
     """ recursively scan package folders
     """
@@ -71,16 +67,24 @@ def _pic_analyse_package(
                 PicScannedModule(
                     name    = filepath.name,
                     path    = filepath,
+                    relpath = filepath.resolve().relative_to(base_prefix),
                     modules = {},
                 ),
                 package,
+                base_prefix,
             )
             continue
         if not filepath.name.endswith('.py'):
             log_warning(f"file '{str(filepath)}' is not a valid")
             continue
         module.modules[filepath.stem] = _pic_analyse_file(
-            filepath    = filepath,
+            fileinfo    = PicScannedFile(
+                path    = filepath,
+                relpath = filepath.resolve().relative_to(base_prefix),
+                symbols = {},
+                exports = [],
+                imports = [],
+            ),
             package     = package,
         )
     return module
@@ -89,17 +93,32 @@ def _pic_analyse_package(
 # Public
 #---
 
-def pic_scan_package(prefix: Path) -> PicScannedModule:
+def pic_scan_package(
+    prefix: Path,
+) -> Union[PicScannedModule,PicScannedFile]:
     """ package scanner
     """
-    report = PicScannedModule(
-        name    = prefix.name,
-        path    = prefix,
-        modules = {},
-    )
+    prefix = prefix.resolve()
     if prefix.is_dir():
-        return _pic_analyse_package(report, prefix.name)
+        return _pic_analyse_package(
+            module      = PicScannedModule(
+                name    = prefix.name,
+                path    = prefix.resolve(),
+                relpath = prefix.relative_to(prefix.parent),
+                modules = {},
+            ),
+            package     = prefix.name,
+            base_prefix = prefix.parent,
+        )
     if not prefix.name.endswith('.py'):
         log_warning(f"file '{str(prefix)}' is not a valid")
-    report.modules[prefix.name] = _pic_analyse_file(prefix, prefix.name)
-    return report
+    return _pic_analyse_file(
+        fileinfo    = PicScannedFile(
+            path    = prefix,
+            relpath = prefix.resolve().relative_to(prefix.parent),
+            symbols = {},
+            exports = [],
+            imports = [],
+        ),
+        package     = prefix.name,
+    )

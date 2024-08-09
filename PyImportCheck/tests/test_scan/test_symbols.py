@@ -56,6 +56,7 @@ def test_scan_symbols_var() -> None:
     )
     file_info = PicScannedFile(
         path    = Path('aaaa'),
+        relpath = Path('aaaa'),
         symbols = {},
         exports = [],
         imports = [],
@@ -86,6 +87,7 @@ def test_scan_symbols_func() -> None:
     )
     file_info = PicScannedFile(
         path    = Path('aaaa'),
+        relpath = Path('aaaa'),
         symbols = {},
         exports = [],
         imports = [],
@@ -110,6 +112,7 @@ def test_scan_symbols_class() -> None:
     )
     file_info = PicScannedFile(
         path    = Path('aaaa'),
+        relpath = Path('aaaa'),
         symbols = {},
         exports = [],
         imports = [],

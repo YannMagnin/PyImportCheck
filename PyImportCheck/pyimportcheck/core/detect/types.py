@@ -60,6 +60,7 @@ class PicDetectReport(PicDebugClass):
         }
         for notif_list in self.notifications.values():
             for notif in notif_list:
+                print(notif.path)
                 outinfo['notifications'].append({
                     'type': notif.type,
                     'path': str(notif.path),

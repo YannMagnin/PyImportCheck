@@ -15,7 +15,7 @@ _PREFIX_PKG = Path(f"{__file__}/../../_data/fakepkg").resolve()
 _SCANINFO = [
     PicDetectNotification(
         type    = 'error',
-        path    = Path('fakepkg/a.py'),
+        path    = _PREFIX_PKG/'a.py',
         log     = \
             '(fakepkg/a.py) '
             'fakepkg.a:17 -> fakepkg.__init__:10 -> fakepkg.a:17 '
@@ -23,7 +23,7 @@ _SCANINFO = [
     ),
     PicDetectNotification(
         type    = 'error',
-        path    = Path('fakepkg/__init__.py'),
+        path    = _PREFIX_PKG/'__init__.py',
         log     = \
             '(fakepkg/__init__.py) '
             'fakepkg.__init__:10 -> fakepkg.a:17 -> fakepkg.__init__:10 -> '
@@ -31,7 +31,7 @@ _SCANINFO = [
     ),
     PicDetectNotification(
         type    = 'error',
-        path    = Path('fakepkg/test/__init__.py'),
+        path    = _PREFIX_PKG/'test/__init__.py',
         log     = \
             '(fakepkg/test/__init__.py) fakepkg.test.__init__:8 -> '
             'fakepkg.a:17 -> fakepkg.__init__:10 -> fakepkg.a:17 -> ...',

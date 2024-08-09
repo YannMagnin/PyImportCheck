@@ -75,6 +75,7 @@ def test_scan_import_raw() -> None:
     )
     file_info = PicScannedFile(
         path    = Path('aaaa'),
+        relpath = Path('aaaa'),
         symbols = {},
         exports = [],
         imports = [],
@@ -129,6 +130,7 @@ def test_scan_import_inline() -> None:
     )
     file_info = PicScannedFile(
         path    = Path('aaaa'),
+        relpath = Path('aaaa'),
         symbols = {},
         exports = [],
         imports = [],
@@ -189,6 +191,7 @@ def test_scan_import_multiline() -> None:
     )
     file_info = PicScannedFile(
         path    = Path('aaaa'),
+        relpath = Path('aaaa'),
         symbols = {},
         exports = [],
         imports = [],

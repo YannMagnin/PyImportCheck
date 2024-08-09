@@ -11,17 +11,20 @@ from pyimportcheck.core.detect import PicDetectNotification
 # Internals
 #---
 
-_PREFIX_PKG = Path(f"{__file__}/../../_data/missing_export").resolve()
+_PREFIX_PKG = Path(f"{__file__}/../../").resolve()
+print(_PREFIX_PKG)
+_PREFIX_PKG = _PREFIX_PKG / '_data/missing_export'
+print(_PREFIX_PKG)
 _EXPORT_INFO = [
     PicDetectNotification(
         type    = 'warning',
-        path    = Path('missing_export/b.py'),
+        path    = _PREFIX_PKG/'b.py',
         log     = \
             'missing_export/b.py: missing exported symbol \'b_func1\'',
     ),
     PicDetectNotification(
         type    = 'warning',
-        path    = Path('missing_export/a.py'),
+        path    = _PREFIX_PKG/'a.py',
         log     = \
             'missing_export/a.py: missing the `__all__` '
             'symbol, which can be declared as follows:\n'
@@ -33,21 +36,21 @@ _EXPORT_INFO = [
     ),
     PicDetectNotification(
         type    = 'warning',
-        path    = Path('missing_export/c.py'),
+        path    = _PREFIX_PKG/'c.py',
         log     = \
             'missing_export/c.py:7: symbol \'c_func0\' has '
             'already been exported, you can remove this line',
     ),
     PicDetectNotification(
         type    = 'warning',
-        path    = Path('missing_export/c.py'),
+        path    = _PREFIX_PKG/'c.py',
         log     = \
             'missing_export/c.py:8: symbol \'c_func1\' has '
             'already been exported, you can remove this line',
     ),
     PicDetectNotification(
         type    = 'warning',
-        path    = Path('missing_export/__main__.py'),
+        path    = _PREFIX_PKG/'__main__.py',
         log     = \
             'missing_export/__main__.py:4: You can remove the `__all__` '
             'declaration since this magic file should not export symbols',

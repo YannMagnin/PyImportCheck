@@ -64,9 +64,11 @@ def test_scan_complet() -> None:
     assert_obj = PicScannedModule(
         name    = 'fakepkg',
         path    = fakepkg_path,
+        relpath = Path('fakepkg'),
         modules = {
             '__init__': PicScannedFile(
                 path    = fakepkg_path/'__init__.py',
+                relpath = Path('fakepkg/__init__.py'),
                 symbols = {
                     '__all__' : \
                         PicScannedSymbol(
@@ -112,12 +114,14 @@ def test_scan_complet() -> None:
             ),
             '__main__' : PicScannedFile(
                 path    = fakepkg_path/'__main__.py',
+                relpath = Path('fakepkg/__main__.py'),
                 symbols = {},
                 exports = [],
                 imports = [],
             ),
             'a' : PicScannedFile(
                 path    = fakepkg_path/'a.py',
+                relpath = Path('fakepkg/a.py'),
                 symbols = {
                     '__all__': \
                         PicScannedSymbol(
@@ -152,6 +156,7 @@ def test_scan_complet() -> None:
             ),
             'b' : PicScannedFile(
                 path    = fakepkg_path/'b.py',
+                relpath = Path('fakepkg/b.py'),
                 symbols = {
                     'b_test1': \
                         PicScannedSymbol(
@@ -172,10 +177,12 @@ def test_scan_complet() -> None:
             'test': PicScannedModule(
                 name    = 'test',
                 path    = fakepkg_path/ 'test',
+                relpath = Path('fakepkg/test'),
                 modules = {
                     '__init__': \
                         PicScannedFile(
                             path    = fakepkg_path/'test/__init__.py',
+                            relpath = Path('fakepkg/test/__init__.py'),
                             symbols = {
                                 '__all__': \
                                     PicScannedSymbol(
@@ -216,6 +223,7 @@ def test_scan_complet() -> None:
     )
     print(fakepkg_path)
     outscan = pic_scan_package(fakepkg_path)
+    assert isinstance(outscan, PicScannedModule)
     print(f"TEST ====> {outscan}")
     _test_scan_module(
         assert_obj,

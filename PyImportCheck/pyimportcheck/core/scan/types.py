@@ -67,6 +67,7 @@ class PicScannedExport(PicDebugClass):
 class PicScannedFile(PicDebugClass):
     """ scanned python file information """
     path:       Path
+    relpath:    Path
     symbols:    Dict[str,PicScannedSymbol]
     exports:    List[PicScannedExport]
     imports:    List[PicScannedImport]
@@ -79,6 +80,7 @@ class PicScannedFile(PicDebugClass):
 @dataclass
 class PicScannedModule(PicDebugClass):
     """ scanned module information """
-    name:       str
-    path:       Path
-    modules:    Dict[str,Union[PicScannedModule,PicScannedFile]]
+    name:           str
+    path:           Path
+    relpath:        Path
+    modules:        Dict[str,Union[PicScannedModule,PicScannedFile]]

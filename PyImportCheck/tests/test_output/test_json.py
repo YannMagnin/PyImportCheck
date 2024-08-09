@@ -24,7 +24,7 @@ _JSON_OUT: Dict[str,Any] = {
     'notifications': [
         {
             'type': 'error',
-            'path': 'fakepkg/test/__init__.py',
+            'path': str(_PREFIX_PKG/'test/__init__.py'),
             'log': \
                 '(fakepkg/test/__init__.py) '
                 'fakepkg.test.__init__:8 -> fakepkg.a:17 -> '
@@ -32,7 +32,7 @@ _JSON_OUT: Dict[str,Any] = {
         },
         {
             'type': 'error',
-            'path': 'fakepkg/a.py',
+            'path': str(_PREFIX_PKG/'a.py'),
             'log': \
                 '(fakepkg/a.py) '
                 'fakepkg.a:17 -> fakepkg.__init__:10 -> fakepkg.a:17 -> '
@@ -40,7 +40,7 @@ _JSON_OUT: Dict[str,Any] = {
         },
         {
             'type': 'error',
-            'path': 'fakepkg/__init__.py',
+            'path': str(_PREFIX_PKG/'__init__.py'),
             'log': \
                 '(fakepkg/__init__.py) '
                 'fakepkg.__init__:10 -> fakepkg.a:17 -> '
@@ -48,7 +48,7 @@ _JSON_OUT: Dict[str,Any] = {
         },
         {
             'type': 'warning',
-            'path': 'fakepkg/b.py',
+            'path': str(_PREFIX_PKG/'b.py'),
             'log': \
                 'fakepkg/b.py: missing the `__all__` symbol, which can be '
                 'declared as follows:\n'

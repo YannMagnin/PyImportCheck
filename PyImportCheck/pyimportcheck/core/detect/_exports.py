@@ -4,7 +4,7 @@ pyimportcheck.core.detect._exports  - check missing / bad `__all__` symbol
 __all__ = [
     'pic_detect_exports_mistake',
 ]
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Union
 
 from pyimportcheck.core.detect.types import PicDetectNotification
 from pyimportcheck.core.scan import (
@@ -19,23 +19,18 @@ from pyimportcheck.core.scan import (
 
 def _pic_generate_notification(
     notif_type: str,
-    root:       PicScannedModule,
     info:       PicScannedFile,
     log:        str,
 ) -> PicDetectNotification:
     """ generate a notification
     """
-    pathfile = info.path.resolve().relative_to(
-        (root.path/'..').resolve(),
-    )
     return PicDetectNotification(
         type    = notif_type,
-        path    = pathfile,
-        log     = f"{pathfile}:{log}",
+        path    = info.path,
+        log     = f"{info.relpath}:{log}",
     )
 
 def _pic_check_missing_export(
-    root: PicScannedModule,
     info: PicScannedFile,
 ) -> List[PicDetectNotification]:
     """ check missing `__all__` declaration
@@ -53,7 +48,6 @@ def _pic_check_missing_export(
         return [
             _pic_generate_notification(
                 notif_type  = 'warning',
-                root        = root,
                 info        = info,
                 log         = log,
             ),
@@ -61,7 +55,6 @@ def _pic_check_missing_export(
     return []
 
 def _pic_check_mismatched_export(
-    root: PicScannedModule,
     info: PicScannedFile,
 ) -> List[PicDetectNotification]:
     """ check mismatched `__all__` declaration
@@ -82,7 +75,6 @@ def _pic_check_mismatched_export(
                 notifications.append(
                     _pic_generate_notification(
                         notif_type  = 'warning',
-                        root        = root,
                         info        = info,
                         log         = \
                             f"{exp.lineno}: symbol '{exp.name}' has "
@@ -96,7 +88,6 @@ def _pic_check_mismatched_export(
             notifications.append(
                 _pic_generate_notification(
                     notif_type  = 'warning',
-                    root        = root,
                     info        = info,
                     log         = \
                         f"{exp.lineno}: symbol '{exp.name}' should not "
@@ -107,7 +98,6 @@ def _pic_check_mismatched_export(
         notifications.append(
             _pic_generate_notification(
                 notif_type  = 'error',
-                root        = root,
                 info        = info,
                 log         = \
                     f"{exp.lineno}: exported symbol '{exp.name}' does "
@@ -122,7 +112,6 @@ def _pic_check_mismatched_export(
         notifications.append(
             _pic_generate_notification(
                 notif_type  = 'warning',
-                root        = root,
                 info        = info,
                 log         = f" missing exported symbol '{expname}'",
             ),
@@ -130,7 +119,6 @@ def _pic_check_mismatched_export(
     return notifications
 
 def _pic_check_export_validity(
-    root: PicScannedModule,
     info: PicScannedFile,
 ) -> List[PicDetectNotification]:
     """ check `__all__` declaration
@@ -145,7 +133,6 @@ def _pic_check_export_validity(
             notifications.append(
                 _pic_generate_notification(
                     notif_type  = 'warning',
-                    root        = root,
                     info        = info,
                     log         = \
                         f"{info.symbols['__all__'].lineno}: "
@@ -153,16 +140,15 @@ def _pic_check_export_validity(
                         'this magic file should not export symbols',
                 ),
             )
-            notifications += _pic_check_mismatched_export(root, info)
+            notifications += _pic_check_mismatched_export(info)
         return notifications
-    if notifications := _pic_check_missing_export(root, info):
+    if notifications := _pic_check_missing_export(info):
         return notifications
-    if notifications := _pic_check_mismatched_export(root, info):
+    if notifications := _pic_check_mismatched_export(info):
         return notifications
     return []
 
 def _pic_detect_exports_mistake(
-    root:    PicScannedModule,
     current: PicScannedModule,
 ) -> List[PicDetectNotification]:
     """ check missing / bad `__all__` declaration
@@ -170,9 +156,9 @@ def _pic_detect_exports_mistake(
     notifications: List[PicDetectNotification] = []
     for _, module_info in current.modules.items():
         if isinstance(module_info, PicScannedModule):
-            notifications += _pic_detect_exports_mistake(root, module_info)
+            notifications += _pic_detect_exports_mistake(module_info)
             continue
-        notifications += _pic_check_export_validity(root, module_info)
+        notifications += _pic_check_export_validity(module_info)
     return notifications
 
 #---
@@ -180,8 +166,10 @@ def _pic_detect_exports_mistake(
 #---
 
 def  pic_detect_exports_mistake(
-    current: PicScannedModule,
+    current: Union[PicScannedModule,PicScannedFile],
 ) -> List[PicDetectNotification]:
     """ check missing / bad `__all__` declaration
     """
-    return _pic_detect_exports_mistake(current, current)
+    if isinstance(current, PicScannedFile):
+        return _pic_check_export_validity(current)
+    return _pic_detect_exports_mistake(current)
