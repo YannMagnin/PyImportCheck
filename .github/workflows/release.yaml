@@ -10,13 +10,13 @@ jobs:
 
     steps:
       # setup build environment
-      - name: 'checkout the codebase'
+      - name: 'Checkout the codebase'
         uses: actions/checkout@v4
-      - name: 'install CPython 3.8'
+      - name: 'Install CPython 3.8'
         uses: actions/setup-python@v5
         with:
           python-version: '3.8'
-      - name: 'install poetry'
+      - name: 'Install poetry'
         uses: abatilo/actions-poetry@v3
         with:
           poetry-version: '1.8'
@@ -24,29 +24,29 @@ jobs:
         run: |
           poetry config virtualenvs.create true --local
           poetry config virtualenvs.in-project true --local
-      - name: 'define a cache for the virtual environment'
+      - name: 'Define a cache for the virtual environment'
         uses: actions/cache@v4
         with:
           path: ./.venv
           key: venv-${{ hashFiles('poetry.lock') }}
-      - name: 'install the project dependencies'
+      - name: 'Install the project dependencies'
         run: |
           poetry install
 
       # check the codebase
-      - name: 'check codebase'
+      - name: 'Check codebase'
         run: |
           poetry run pylint -d R0903,R0801 ./PyImportCheck/pyimportcheck
           poetry run mypy --strict ./PyImportCheck/pyimportcheck
           poetry run pytest
 
       # build the project
-      - name: 'build the project'
+      - name: 'Build the project'
         run: |
           poetry build
 
       # generate / fetch needed information
-      - name: 'fetch project information'
+      - name: 'Fetch project information'
         run: |
           version=$(echo ${{ github.event.head_commit.message }})
           version=$(echo $version | grep -oP 'v[0-9]+.[0-9]+.[0-9]+$')
@@ -55,6 +55,10 @@ jobs:
           python ./PyImportCheck/scripts/generate_release_notes.py \
             $version \
             ./PyImportCheck/scripts/release.md
+
+      # publish to PyPi
+      - name: 'Publish package distributions to PyPI'
+        uses: pypa/gh-action-pypi-publish@v1.9.0
 
       # create the release
       - name: 'Create the release'
