@@ -1,9 +1,9 @@
-name: Test, Build and Release
+name: Test, Build and Pre-release
 on: [push]
 
 jobs:
-  release_moi:
-    name: 'Generate the release'
+  prerelease:
+    name: 'Generate the pre-release'
     if: ${{ startsWith(github.event.head_commit.message, 'release v') }}
     permissions: write-all
     runs-on: ubuntu-latest
@@ -56,13 +56,15 @@ jobs:
             $version \
             ./PyImportCheck/scripts/release.md
 
-      # publish to PyPi
-      - name: 'Publish package distributions to PyPI'
+      # publish to TestPyPi
+      - name: 'Publish package distributions to TestPyPI'
         uses: pypa/gh-action-pypi-publish@v1.9.0
+        with:
+          repository-url: 'https://test.pypi.org/legacy/'
 
       # create the release
       - name: 'Create the release'
-        uses: 'softprops/action-gh-release@v2'
+        uses: softprops/action-gh-release@v2
         with:
           name: '${{ env.version }} (${{ env.date_test }})'
           tag_name: ${{ env.version }}
@@ -70,4 +72,5 @@ jobs:
           files: |
             dist/pyimportcheck-*.whl
             dist/pyimportcheck-*.tar.gz
+          prerelease: true
           make_latest: true

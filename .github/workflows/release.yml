@@ -1,0 +1,41 @@
+name: 'Upload to PyPI'
+on:
+  release:
+    types: 'published'
+
+jobs:
+  release:
+    name: 'Upload to PyPI'
+    runs-on: ubuntu-latest
+
+    steps:
+      # setup build environment
+      - name: 'Checkout the codebase'
+        uses: actions/checkout@v4
+      - name: 'Install CPython 3.8'
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.8'
+      - name: 'Install poetry'
+        uses: abatilo/actions-poetry@v3
+        with:
+          poetry-version: '1.8'
+      - name: 'Setup a local virtual environment'
+        run: |
+          poetry config virtualenvs.create true --local
+          poetry config virtualenvs.in-project true --local
+      - name: 'Define a cache for the virtual environment'
+        uses: actions/cache@v4
+        with:
+          path: ./.venv
+          key: venv-${{ hashFiles('poetry.lock') }}
+
+      # build the project
+      - name: 'Install the project dependencies and build'
+        run: |
+          poetry install
+          poetry build
+
+      # publish to PyPi
+      - name: 'Publish package distributions to PyPI'
+        uses: pypa/gh-action-pypi-publish@v1.9.0
