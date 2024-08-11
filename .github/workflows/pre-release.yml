@@ -48,26 +48,45 @@ jobs:
       # generate / fetch needed information
       - name: 'Fetch project information'
         run: |
-          version=$(echo ${{ github.event.head_commit.message }})
-          version=$(echo $version | grep -oP 'v[0-9]+.[0-9]+.[0-9]+$')
-          echo "version=${version}" >> $GITHUB_ENV
+          sversion=$(echo ${{ github.event.head_commit.message }})
+          tversion=$(echo $sversion | grep -oP 'v[0-9]+.[0-9]+.[0-9]+$')
+          rversion=$(echo $sversion | grep -oP '[0-9]+.[0-9]+.[0-9]+$')
+          echo "tversion=${tversion}" >> $GITHUB_ENV
+          echo "rversion=${rversion}" >> $GITHUB_ENV
           echo "date_test=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
           python ./PyImportCheck/scripts/generate_release_notes.py \
-            $version \
+            $tversion \
             ./PyImportCheck/scripts/release.md
+
+      # huge workaround to break the TestPyPI stupid limitation
+      # @notes
+      # - PyPI and TestPyPI do not allow to upload multiple-time the project
+      #   event if it has been removed manually (yes, even in the test
+      #   instance which is the dumbest choice I have ever see for a test
+      #   instance). So, lets add a counter in the version information to
+      #   allow me to re-run the upload until the version is force pushed to
+      #   the instance.
+      #   This is absolutly ridiculus.
+      - name: 'Fuck PyPI'
+        run: |
+          prefix=$(echo pyimportcheck-${{ env.rversion }})
+          prefix=$(echo $prefix-${{ github.run_attempt }})
+          mv ./dist/*.whl ./dist/${prefix}-py3-none-any.whl
+          mv ./dist/*.gz ./dist/${prefix}.tar.gz
 
       # publish to TestPyPi
       - name: 'Publish package distributions to TestPyPI'
         uses: pypa/gh-action-pypi-publish@v1.9.0
         with:
           repository-url: 'https://test.pypi.org/legacy/'
+          verbose: true
 
       # create the release
       - name: 'Create the release'
         uses: softprops/action-gh-release@v2
         with:
-          name: '${{ env.version }} (${{ env.date_test }})'
-          tag_name: ${{ env.version }}
+          name: '${{ env.tversion }} (${{ env.date_test }})'
+          tag_name: ${{ env.tversion }}
           body_path: './PyImportCheck/scripts/release.md'
           files: |
             dist/pyimportcheck-*.whl

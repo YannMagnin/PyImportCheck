@@ -1,4 +1,4 @@
-# PyImportCheck - v0.1.0
+# PyImportCheck - v0.1.1
 
 <p align="center">
   <img src="https://github.com/user-attachments/assets/b245ace4-40a1-4372-99f2-77fdea12d6f6">
