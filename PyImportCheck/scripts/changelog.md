@@ -1,4 +1,4 @@
-# v0.1.2
+# v0.1.3
 
 First beta release of the `PyImportCheck` project which provides elementary scanners and detectors. Please note that there is still some work to do to remove some limitation (like circular dependency detected multiple times), see the [roadmap issue](https://github.com/YannMagnin/PyImportCheck/issues/1) for more information !
 
@@ -12,5 +12,6 @@ First beta release of the `PyImportCheck` project which provides elementary scan
 ## Fixes
 
 - fix release pipeline
+- fix PyPI deployment
 
 ---
