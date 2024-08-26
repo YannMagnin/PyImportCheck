@@ -58,22 +58,6 @@ jobs:
             $tversion \
             ./PyImportCheck/scripts/release.md
 
-      # huge workaround to break the TestPyPI stupid limitation
-      # @notes
-      # - PyPI and TestPyPI do not allow to upload multiple-time the project
-      #   event if it has been removed manually (yes, even in the test
-      #   instance which is the dumbest choice I have ever see for a test
-      #   instance). So, lets add a counter in the version information to
-      #   allow me to re-run the upload until the version is force pushed to
-      #   the instance.
-      #   This is absolutly ridiculus.
-      - name: 'Fuck PyPI'
-        run: |
-          prefix=$(echo pyimportcheck-${{ env.rversion }})
-          prefix=$(echo $prefix-${{ github.run_attempt }})
-          mv ./dist/*.whl ./dist/${prefix}-py3-none-any.whl
-          mv ./dist/*.gz ./dist/${prefix}.tar.gz
-
       # publish to TestPyPi
       - name: 'Publish package distributions to TestPyPI'
         uses: pypa/gh-action-pypi-publish@v1.9.0
