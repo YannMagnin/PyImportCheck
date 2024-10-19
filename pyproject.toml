@@ -16,7 +16,7 @@ pyimportcheck = 'pyimportcheck._cli:pyimportcheck_cli_entry'
 
 
 [tool.poetry.dependencies]
-python  = '>=3.8.*'
+python  = '>=3.9.*'
 click   = '8.1.*'
 
 [tool.poetry.dev-dependencies]
@@ -24,18 +24,11 @@ pynvim              = '*'
 pylint              = '*'
 mypy                = '*'
 pytest              = '*'
-pytest-dependency   = '*'
-pytest-cov          = '*'
-
 
 
 [tool.pytest.ini_options]
 log_level = 'INFO'
 addopts = '--ignore=PyImportCheck/tests/_data'
-required_plugins = [
-    'pytest-dependency',
-    'pytest-cov',
-]
 python_functions = [
     'test_*',
 ]

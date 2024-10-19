@@ -70,11 +70,13 @@ def test_json_output() -> None:
     fakefile = Path('./fakeoutput.json')
     scaninfo = pic_scan_package(_PREFIX_PKG)
     detectinfo = pic_detect_all(scaninfo)
-    total = pic_output_json(fakefile, detectinfo)
+    total = pic_output_json(fakefile, fakefile, detectinfo)
     assert fakefile.exists()
     with open(fakefile, 'r', encoding='utf-8') as testfd:
         export = json.load(testfd)
     fakefile.unlink()
+    assert str(fakefile) in export
+    export = export[str(fakefile)]
     assert total == _JSON_OUT['total']['all']
     for info in _JSON_OUT['notifications']:
         print(f"looking for ==> {info}")

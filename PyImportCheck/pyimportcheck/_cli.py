@@ -23,7 +23,7 @@ from pyimportcheck.core.output import (
 
 @click.command('pyimportcheck')
 @click.argument(
-    'package_prefix',
+    'package_prefix_list',
     required    = True,
     metavar     = 'PATHFILE',
     type        = click.Path(
@@ -32,6 +32,7 @@ from pyimportcheck.core.output import (
         dir_okay    = True,
         path_type   = Path,
     ),
+    nargs       = -1,
 )
 @click.option(
     '-j', '--json', 'json_output',
@@ -59,19 +60,20 @@ from pyimportcheck.core.output import (
 )
 @click.version_option(message='%(version)s')
 def pyimportcheck_cli_entry(
-    package_prefix:   Path,
-    json_output:      Optional[Path],
-    json_output_only: Optional[Path],
+    package_prefix_list:    list[Path],
+    json_output:            Optional[Path],
+    json_output_only:       Optional[Path],
 ) -> NoReturn:
     """ Python circular import detector
     """
     ret = 0
-    info = pic_scan_package(package_prefix)
-    report = pic_detect_all(info)
-    if not json_output_only:
-        ret = pic_output_stdout(report)
-    if json_output:
-        ret = pic_output_json(json_output, report)
-    if json_output_only:
-        ret = pic_output_json(json_output_only, report)
+    for package_prefix in package_prefix_list:
+        info = pic_scan_package(package_prefix)
+        report = pic_detect_all(info)
+        if not json_output_only:
+            ret += pic_output_stdout(package_prefix, report)
+        if json_output:
+            ret += pic_output_json(json_output, package_prefix, report)
+        if json_output_only:
+            ret += pic_output_json(json_output_only, package_prefix, report)
     sys.exit(ret)
